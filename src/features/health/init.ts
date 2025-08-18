@@ -1,41 +1,66 @@
-import { Platform, Alert } from 'react-native';
+// init.ts
+import { Alert, Platform } from 'react-native';
 import {
-  getSdkStatus,
   initialize,
+  getSdkStatus,
+  getGrantedPermissions,
   requestPermission,
-  readRecords,
-  openHealthConnectSettings,
+  type Permission,
+  type WriteExerciseRoutePermission,
 } from 'react-native-health-connect';
-/** Inicializuje HC klienta, prípadne otvorí nastavenia ak chýba poskytovateľ. */
-export async function ensureHCInitialized() {
-  // 1) status – skús bez parametra, potom s providerom
-    console.log('[HOVNO]');
-  let s = -1;
-  try { s = await getSdkStatus(); } catch {    console.log('[Prve na hovno]');}
-  if (s !== 0) {
-    try { s = await getSdkStatus('com.google.android.apps.healthdata'); } catch {     console.log('[Druhe na hovno]');}
+
+/**
+ * Minimálny set, bez ktorého sync nedáva zmysel.
+ * Doplň si ďalšie (HeartRate, Distance, Calories…), ak ich potrebuješ.
+ */
+const REQUIRED_PERMISSIONS: Permission[] = [
+  { accessType: 'read', recordType: 'ExerciseSession' },
+  { accessType: 'read', recordType: 'Steps' },
+];
+
+/** Inicializuje Health Connect a zaistí chýbajúce povolenia. */
+export async function ensureHCInitialized(): Promise<boolean> {
+  if (Platform.OS !== 'android') return true;
+
+  try {
+    // 1) initialize – jediný „hard fail“
+    const ok = await initialize();
+    if (!ok) {
+      Alert.alert('Health Connect', 'initialize() zlyhalo.');
+      return false;
+    }
+    console.log('[HC] initialize() OK');
+
+    // 2) Status len logujeme (na niektorých zariadeniach býva 3 aj po grantoch)
+    try {
+      const s1 = await getSdkStatus();
+      const s2 = await getSdkStatus('com.google.android.apps.healthdata');
+      console.log('[HC] getSdkStatus():', s1, '| provider:', s2);
+    } catch (e) {
+      console.log('[HC] getSdkStatus() error (ignored):', e);
+    }
+
+    // 3) Zisti, čo už je udelené
+    const granted = await getGrantedPermissions(); // zvyčajne pole objektov { accessType, recordType }
+    const isGranted = (p: Permission) =>
+      granted.some(g => g.accessType === p.accessType && g.recordType === p.recordType);
+
+    const missing: Permission[] = REQUIRED_PERMISSIONS.filter(p => !isGranted(p));
+
+    if (missing.length === 0) {
+      console.log('[HC] permissions: all granted');
+      return true;
+    }
+
+    // 4) Požiadaj len o chýbajúce
+    const toRequest: (Permission | WriteExerciseRoutePermission)[] = missing;
+    await requestPermission(toRequest);
+    console.log('[HC] permissions: newly granted');
+
+    return true;
+  } catch (e) {
+    console.log('[HC] ensureHCInitialized error:', e);
+    Alert.alert('Health Connect', 'Inicializácia/povolenia zlyhali.');
+    return false;
   }
-  
-  // 2) init
-  const ok = await initialize();
-  if (!ok) { Alert.alert('HC', 'initialize() zlyhalo') ; return; }
-  if (s !== 0) {
-    await openHealthConnectSettings(); // HC je nainštalovaný, otvorí jeho UI
-        console.log('Tretie na hovno');
-    Alert.alert('Health Connect', 'HC je dostupný, ale ešte nevidí kompatibilné appky. Skús nainštalovať/aktualizovať a potom sa vráť.');
-    return;
-  }
-
-
-    // 3) povolenia (aspoň Steps)
-  await requestPermission([{ accessType: 'read', recordType: 'Steps' }]);
-
-  // 4) krátke čítanie (posledná hodina)
-  const end = new Date();
-  const start = new Date(end.getTime() - 60 * 60 * 1000);
-  await readRecords('Steps', {
-    timeRangeFilter: { operator: 'between', startTime: start.toISOString(), endTime: end.toISOString() },
-  });
-  console.log('[Hotovo – skontroluj Health Connect → Recent access.]');
-  Alert.alert('HC', 'Hotovo – skontroluj Health Connect → Recent access.');
 }

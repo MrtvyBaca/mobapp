@@ -1,49 +1,27 @@
-import { Platform } from 'react-native';
-import AppleHealthKit from 'react-native-health';
 import { readRecords } from 'react-native-health-connect';
 
-export type HealthWorkout = {
+export type Workout = {
   id: string;
-  start: string;        // ISO
-  end: string;          // ISO
-  type: string;         // napr. "running", "cycling", "walking", ...
+  start: string;             // ← namiesto startTime
+  end: string;               // ← namiesto endTime
+  type: string;              // ← z ExerciseSession.exerciseType (alebo title)
   distanceMeters?: number;
   caloriesKcal?: number;
-  route?: Array<{ lat: number; lon: number; t: number }>;
 };
 
-/** Načíta tréningy v intervale (vrátane) */
-export async function fetchWorkouts(fromISO: string, toISO: string): Promise<HealthWorkout[]> {
-  if (Platform.OS === 'ios') {
-    const opts = { startDate: fromISO, endDate: toISO };
-    const workouts = await new Promise<any[]>((resolve, reject) => {
-      AppleHealthKit.getSamples(opts, (err: any, res: any[]) => (err ? reject(err) : resolve(res)));
-    });
+export async function fetchWorkouts(fromISO: string, toISO: string): Promise<Workout[]> {
+  const res = await readRecords('ExerciseSession', {
+    timeRangeFilter: { operator: 'between', startTime: fromISO, endTime: toISO },
+  });
 
-    // Apple hist. data vracajú rôzne typy – zmapujeme si známe
-    return workouts.map((w) => ({
-      id: String(w.uuid ?? `${w.startDate}-${w.endDate}`),
-      start: w.startDate,
-      end: w.endDate,
-      type: String(w.workoutActivityType ?? w.activityName ?? 'other').toLowerCase(),
-      distanceMeters: typeof w.totalDistance === 'number' ? w.totalDistance : undefined,
-      caloriesKcal: typeof w.totalEnergyBurned === 'number' ? w.totalEnergyBurned : undefined,
-      // route by sme vedeli dočítať zvlášť (getWorkoutRoute), necháme na neskôr
-    }));
-  } else {
-    // Health Connect
-    const sessions = await readRecords('ExerciseSession', {
-      timeRangeFilter: { operator: 'between', startTime: fromISO, endTime: toISO },
-    });
+  const records = Array.isArray(res) ? res : (res as any)?.records ?? [];
 
-    return sessions.records.map((r: any) => ({
-      id: r.metadata?.id ?? `${r.startTime}-${r.endTime}`,
-      start: r.startTime,
-      end: r.endTime,
-      type: String(r.exerciseType ?? 'other').toLowerCase(), // napr. RUNNING, CYCLING...
-      distanceMeters: r?.distance?.inMeters,
-      caloriesKcal: r?.energy?.inKilocalories,
-      // GPS stream Health Connect štandardne nevracia – stačí summary
-    }));
-  }
+  return records.map((r: any) => ({
+    id: r.metadata?.id ?? r.uid ?? `${r.startTime}-${r.endTime}`,
+    start: r.startTime,                     // ← premapované
+    end: r.endTime,                         // ← premapované
+    type: r.exerciseType ?? r.title ?? 'unknown',
+    distanceMeters: r.distance ?? r.distanceMeters,    // podľa toho, čo knižnica vracia
+    caloriesKcal: r.totalCalories ?? r.caloriesKcal,   // dto
+  }));
 }
