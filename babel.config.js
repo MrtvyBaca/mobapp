@@ -4,10 +4,20 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     plugins: [
       ['module-resolver', {
-        extensions: ['.tsx', '.ts', '.js', '.jsx', '.json'],
-        alias: { '@': './src' },
+        root: ['./'],
+        alias: {
+          '@': './src',
+          '@assets': './src/assets',
+          '@features': './src/features',
+          '@navigation': './src/navigation',
+          '@providers': './src/providers',
+          '@shared': './src/shared',
+          '@store': './src/store',
+          '@theme': './src/theme'
+        },
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
       }],
-      'react-native-reanimated/plugin' // MUSÍ byť úplne posledný
+      'react-native-reanimated/plugin',
     ],
   };
 };
