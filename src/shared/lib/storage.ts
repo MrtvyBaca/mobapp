@@ -98,10 +98,13 @@ export async function add(rec: Omit<TrainingRecord, 'id' | 'createdAt' | 'update
   return withId;
 }
 
-export async function updateById(id: string, patch: Partial<Omit<TrainingRecord, 'id' | 'createdAt'>>) {
+export async function updateById(
+  id: string,
+  patch: Partial<Omit<TrainingRecord, 'id' | 'createdAt'>>,
+) {
   const list = await getAll();
   const updated = list.map((r) =>
-    r.id === id ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r
+    r.id === id ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r,
   );
   await saveAll(updated);
 }

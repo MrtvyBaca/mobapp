@@ -24,24 +24,32 @@ export default function ZaznamyMesiac({ route }: Props) {
 
   const [records, setRecords] = React.useState<TrainingRecord[]>([]);
   const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [draft, setDraft] = React.useState<{ date: string; duration: string; description: string } | null>(null);
+  const [draft, setDraft] = React.useState<{
+    date: string;
+    duration: string;
+    description: string;
+  } | null>(null);
 
   const load = React.useCallback(async () => {
-    const list = await getAll();    // načítaj všetky (storage sa postará o migráciu)
+    const list = await getAll(); // načítaj všetky (storage sa postará o migráciu)
     setRecords(list);
     setEditingId(null);
     setDraft(null);
   }, []);
 
-  useFocusEffect(React.useCallback(() => { load(); }, [load]));
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   // Záznamy v danom mesiaci (novšie navrchu)
   const monthEntries = React.useMemo(
     () =>
       records
-        .filter(r => toMonthKey(r.date) === month)
+        .filter((r) => toMonthKey(r.date) === month)
         .sort((a, b) => b.date.localeCompare(a.date)),
-    [records, month]
+    [records, month],
   );
 
   const startEdit = (rec: TrainingRecord) => {
@@ -60,7 +68,8 @@ export default function ZaznamyMesiac({ route }: Props) {
 
   const saveEdit = async () => {
     if (!editingId || !draft) return;
-    if (!draft.date || !/^\d{4}-\d{2}-\d{2}$/.test(draft.date)) return alert('Dátum musí byť vo formáte YYYY-MM-DD');
+    if (!draft.date || !/^\d{4}-\d{2}-\d{2}$/.test(draft.date))
+      return alert('Dátum musí byť vo formáte YYYY-MM-DD');
     const dur = Number(draft.duration);
     if (!Number.isFinite(dur) || dur < 0) return alert('Trvanie musí byť číslo (min)');
 
@@ -73,20 +82,20 @@ export default function ZaznamyMesiac({ route }: Props) {
     await updateById(editingId, patch);
 
     // optimisticky aktualizuj lokálny stav
-    setRecords(prev => prev.map(r => (r.id === editingId ? { ...r, ...patch } : r)));
+    setRecords((prev) => prev.map((r) => (r.id === editingId ? { ...r, ...patch } : r)));
     cancelEdit();
   };
 
   const deleteRec = async (id: string) => {
     await removeById(id);
-    setRecords(prev => prev.filter(r => r.id !== id));
+    setRecords((prev) => prev.filter((r) => r.id !== id));
     if (editingId === id) cancelEdit();
   };
 
   // súčet minút v mesiaci (na info)
   const totalMinutes = React.useMemo(
     () => monthEntries.reduce((s, r) => s + Number(r.duration || 0), 0),
-    [monthEntries]
+    [monthEntries],
   );
 
   return (
@@ -110,32 +119,36 @@ export default function ZaznamyMesiac({ route }: Props) {
                   <TextInput
                     label="Dátum (YYYY-MM-DD)"
                     value={draft?.date ?? ''}
-                    onChangeText={(t) => setDraft(d => ({ ...(d as any), date: t }))}
+                    onChangeText={(t) => setDraft((d) => ({ ...(d as any), date: t }))}
                     style={styles.input}
                   />
                   <TextInput
                     label="Trvanie (min)"
                     keyboardType="numeric"
                     value={draft?.duration ?? ''}
-                    onChangeText={(t) => setDraft(d => ({ ...(d as any), duration: t }))}
+                    onChangeText={(t) => setDraft((d) => ({ ...(d as any), duration: t }))}
                     style={styles.input}
                   />
                   <TextInput
                     label="Popis"
                     value={draft?.description ?? ''}
-                    onChangeText={(t) => setDraft(d => ({ ...(d as any), description: t }))}
+                    onChangeText={(t) => setDraft((d) => ({ ...(d as any), description: t }))}
                     style={styles.input}
                     multiline
                   />
                   <View style={styles.actions}>
                     <Button onPress={cancelEdit}>Zrušiť</Button>
-                    <Button mode="contained" onPress={saveEdit}>Uložiť</Button>
+                    <Button mode="contained" onPress={saveEdit}>
+                      Uložiť
+                    </Button>
                   </View>
                 </>
               ) : (
                 <View style={styles.actions}>
                   <Button onPress={() => startEdit(rec)}>Upraviť</Button>
-                  <Button onPress={() => deleteRec(rec.id)} textColor="crimson">Zmazať</Button>
+                  <Button onPress={() => deleteRec(rec.id)} textColor="crimson">
+                    Zmazať
+                  </Button>
                 </View>
               )}
             </Card.Content>

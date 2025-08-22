@@ -11,17 +11,21 @@ function exerciseTypeToString(v: unknown): string {
   if (typeof v === 'string') return v;
   if (typeof v === 'number') {
     // nájdi kľúč v enum-like objekte podľa hodnoty
-    const key = Object.keys(ExerciseType).find(k => (ExerciseType as any)[k] === v);
+    const key = Object.keys(ExerciseType).find((k) => (ExerciseType as any)[k] === v);
     return (key ?? `type_${v}`).toLowerCase();
   }
   return 'unknown';
 }
 
 function startOfDayISO(d = new Date()) {
-  const x = new Date(d); x.setHours(0, 0, 0, 0); return x.toISOString();
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x.toISOString();
 }
 function endOfDayISO(d = new Date()) {
-  const x = new Date(d); x.setHours(23, 59, 59, 999); return x.toISOString();
+  const x = new Date(d);
+  x.setHours(23, 59, 59, 999);
+  return x.toISOString();
 }
 
 /** Normalizuje tvar workoutu pre mapHealthToTraining. */
@@ -29,7 +33,7 @@ function normalizeForMapper(w: any): {
   id: string;
   start: string;
   end: string;
-  type: string;                // ← garantovane string
+  type: string; // ← garantovane string
   distanceMeters?: number;
   caloriesKcal?: number;
 } {
@@ -38,13 +42,13 @@ function normalizeForMapper(w: any): {
 
   // môže prísť: w.type (string), w.exerciseType (number), alebo title (string)
   const rawType = w.type ?? w.exerciseType ?? w.title ?? 'unknown';
-  const type = exerciseTypeToString(rawType);       // ← prevod na string
+  const type = exerciseTypeToString(rawType); // ← prevod na string
 
   return {
     id: w.id ?? w?.metadata?.id ?? w.uid ?? `${start}-${end}`,
     start,
     end,
-    type,                                           // ← string (lowercase)
+    type, // ← string (lowercase)
     distanceMeters: w.distanceMeters ?? w.distance ?? undefined,
     caloriesKcal: w.caloriesKcal ?? w.totalCalories ?? undefined,
   };
@@ -61,7 +65,8 @@ export async function syncHealth({ days = 14 } = {}): Promise<number> {
 
   // 2) Obdobie
   const to = new Date();
-  const from = new Date(); from.setDate(to.getDate() - days);
+  const from = new Date();
+  from.setDate(to.getDate() - days);
   const fromISO = startOfDayISO(from);
   const toISO = endOfDayISO(to);
 
@@ -80,10 +85,13 @@ export async function syncHealth({ days = 14 } = {}): Promise<number> {
     const draftInput = normalizeForMapper(w);
     const draft = mapHealthToTraining(draftInput as any);
 
-    const dupe = existing.find(r =>
-      r.date === draft.date &&
-      Math.abs((r.durationSeconds ?? r.duration * 60) - (draft.durationSeconds ?? draft.duration * 60)) <= 60 &&
-      Math.abs((r.distanceMeters ?? 0) - (draft.distanceMeters ?? 0)) <= 50
+    const dupe = existing.find(
+      (r) =>
+        r.date === draft.date &&
+        Math.abs(
+          (r.durationSeconds ?? r.duration * 60) - (draft.durationSeconds ?? draft.duration * 60),
+        ) <= 60 &&
+        Math.abs((r.distanceMeters ?? 0) - (draft.distanceMeters ?? 0)) <= 50,
     );
     if (dupe) continue;
 

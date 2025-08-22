@@ -25,8 +25,16 @@ export default function StatsNavigator() {
       })}
     >
       <Stack.Screen name="Stats" component={StatsScreen} options={{ title: 'Štatistiky' }} />
-      <Stack.Screen name="MonthStats" component={MonthStats} options={{ title: 'Štatistiky mesiaca' }} />
-      <Stack.Screen name="WeeklyStats" component={WeeklyStats} options={{ title: 'Štatistiky týždňa' }} />
+      <Stack.Screen
+        name="MonthStats"
+        component={MonthStats}
+        options={{ title: 'Štatistiky mesiaca' }}
+      />
+      <Stack.Screen
+        name="WeeklyStats"
+        component={WeeklyStats}
+        options={{ title: 'Štatistiky týždňa' }}
+      />
       {/* Settings TU už nedávaj – je globálne v RootStacku */}
     </Stack.Navigator>
   );

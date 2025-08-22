@@ -23,11 +23,15 @@ export default function ZaznamyScreen() {
 
   // načítanie cez storage (pripravené na neskorší backend)
   const load = React.useCallback(async () => {
-    const list = await getAll();         // ✅ už je to pole objektov
+    const list = await getAll(); // ✅ už je to pole objektov
     setRecords(list);
   }, []);
 
-  useFocusEffect(React.useCallback(() => { load(); }, [load]));
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   // zoskupenie podľa mesiaca + sort novšie → staršie
   const groups = React.useMemo(() => {
@@ -38,8 +42,7 @@ export default function ZaznamyScreen() {
       arr.push(r);
       map.set(key, arr);
     }
-    return Array.from(map.entries())
-      .sort((a, b) => b[0].localeCompare(a[0])); // '2025-08' pred '2025-07'
+    return Array.from(map.entries()).sort((a, b) => b[0].localeCompare(a[0])); // '2025-08' pred '2025-07'
   }, [records]);
 
   return (

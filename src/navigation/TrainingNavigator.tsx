@@ -1,0 +1,33 @@
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
+import TrainingsFeedScreen from '@/features/training/screens/TrainingsFeed.screen';
+import AddTrainingScreen from '@/features/training/screens/AddTraining.screen';
+import SettingsGear from '@/navigation/components/SettingsGear';
+
+const Stack = createStackNavigator();
+
+export default function TrainingNavigator() {
+  const { t } = useTranslation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="TrainingsFeed"
+        component={TrainingsFeedScreen}
+        options={{
+          title: t('screens.trainingsFeed.title'), 
+          headerRight: () => <SettingsGear />,
+          headerRightContainerStyle: { paddingRight: 4 },
+        }}
+      />
+      <Stack.Screen
+        name="AddTraining"
+        component={AddTrainingScreen}
+        options={{
+          title: t('screens.addTraining.title'),
+          headerRight: () => null,
+        }}
+      />
+    </Stack.Navigator>
+  );
+}

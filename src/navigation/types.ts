@@ -4,7 +4,7 @@ export type RootTabParamList = {
   RecordsTab: undefined;
   StatsTab: undefined;
   IceTab: undefined;
-  ReadinessTab: undefined;   // ← nové
+  ReadinessTab: undefined; // ← nové
   DebugDataScreen: undefined; // ← pre debugovanie
 };
 
@@ -19,12 +19,11 @@ export type RecordsStackParamList = {
 export type StatsStackParamList = {
   Stats: undefined;
   MonthStats: { month: string };
-  WeeklyStats: { weekStart: string }; 
-  Settings: undefined;                   // ⚡ nové
+  WeeklyStats: { weekStart: string };
+  Settings: undefined; // ⚡ nové
 };
 
 export type RootStackParamList = {
   MainTabs: undefined;
   Settings: undefined;
 };
-

@@ -16,11 +16,7 @@ export default function RecordsNavigator() {
       }}
     >
       {/* zapneme header, aby bolo vidno ⚙️ */}
-      <Stack.Screen
-        name="Records"
-        component={RecordsScreen}
-        options={{ title: 'Záznamy' }}
-      />
+      <Stack.Screen name="Records" component={RecordsScreen} options={{ title: 'Záznamy' }} />
       <Stack.Screen
         name="RecordsMonth"
         component={RecordsMonth}

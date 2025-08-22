@@ -43,9 +43,9 @@ export async function ensureHCInitialized(): Promise<boolean> {
     // 3) Zisti, čo už je udelené
     const granted = await getGrantedPermissions(); // zvyčajne pole objektov { accessType, recordType }
     const isGranted = (p: Permission) =>
-      granted.some(g => g.accessType === p.accessType && g.recordType === p.recordType);
+      granted.some((g) => g.accessType === p.accessType && g.recordType === p.recordType);
 
-    const missing: Permission[] = REQUIRED_PERMISSIONS.filter(p => !isGranted(p));
+    const missing: Permission[] = REQUIRED_PERMISSIONS.filter((p) => !isGranted(p));
 
     if (missing.length === 0) {
       console.log('[HC] permissions: all granted');

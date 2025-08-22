@@ -9,10 +9,7 @@ import type { StatsStackParamList } from '@/navigation/types';
 import { type TrainingRecord } from '@/shared/lib/training';
 import { getAll } from '@/features/training/storage';
 import { inferType, TYPE_ICON, type TrainingType } from '@/shared/lib/training';
-import {
-  pad2,
-  toMonthKey,
-} from '@/shared/lib/date';
+import { pad2, toMonthKey } from '@/shared/lib/date';
 import { getSettings, type Settings } from '@/features/settings/storage';
 
 type Props = StackScreenProps<StatsStackParamList, 'MonthStats'>;
@@ -43,12 +40,16 @@ export default function MonthStatsScreen({ route }: Props) {
     setRecords(list);
     setSettings(s);
   }, []);
-  useFocusEffect(React.useCallback(() => { load(); }, [load]));
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   // filter pre mesiac
   const monthRecs = React.useMemo(
-    () => records.filter(r => toMonthKey(r.date) === month),
-    [records, month]
+    () => records.filter((r) => toMonthKey(r.date) === month),
+    [records, month],
   );
 
   // súhrn
@@ -67,7 +68,11 @@ export default function MonthStatsScreen({ route }: Props) {
       acc.set(t, curr);
     }
     return Array.from(acc.entries())
-      .map(([type, v]) => ({ type, ...v, avg: v.sessions ? Math.round(v.minutes / v.sessions) : 0 }))
+      .map(([type, v]) => ({
+        type,
+        ...v,
+        avg: v.sessions ? Math.round(v.minutes / v.sessions) : 0,
+      }))
       .sort((a, b) => b.minutes - a.minutes);
   }, [monthRecs]);
 
@@ -75,17 +80,17 @@ export default function MonthStatsScreen({ route }: Props) {
   const [y, m] = month.split('-').map(Number);
   const N = daysInMonth(y, m);
   const daily = React.useMemo(() => {
-    const arr = Array.from({ length: N }, (_, i) => i + 1).map(dayNum => {
+    const arr = Array.from({ length: N }, (_, i) => i + 1).map((dayNum) => {
       const key = `${month}-${pad2(dayNum)}`;
       const minutes = monthRecs
-        .filter(r => r.date.startsWith(key))
+        .filter((r) => r.date.startsWith(key))
         .reduce((s, r) => s + Number(r.duration || 0), 0);
       return { dayNum, key, minutes };
     });
     return arr;
   }, [monthRecs, N, month]);
 
-  const maxDaily = Math.max(1, ...daily.map(d => d.minutes));
+  const maxDaily = Math.max(1, ...daily.map((d) => d.minutes));
   const barWidth = 12;
   const barGap = 6;
   const chartWidth = daily.length * (barWidth + barGap) + 16;
@@ -128,17 +133,21 @@ export default function MonthStatsScreen({ route }: Props) {
       {/* Mesačné ciele (nastavenia) */}
       <Card style={styles.card}>
         <Card.Content>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+          >
             <Title style={styles.sectionTitle}>Mesačné ciele</Title>
             {/* ak máš route 'Settings', zapni tlačidlo */}
             {/* @ts-ignore */}
-            <Button compact onPress={() => (nav as any).navigate?.('Settings')}>Nastaviť</Button>
+            <Button compact onPress={() => (nav as any).navigate?.('Settings')}>
+              Nastaviť
+            </Button>
           </View>
 
-          {(!targetRows.length) ? (
+          {!targetRows.length ? (
             <Paragraph>Žiadne ciele. Otvor „Nastaviť“ a pridaj kvóty na typ tréningu.</Paragraph>
           ) : (
-            targetRows.map(r => (
+            targetRows.map((r) => (
               <View key={r.type} style={{ marginBottom: 10 }}>
                 <Text>
                   {TYPE_ICON[r.type]} {r.type} — {r.done}/{r.target}
@@ -164,9 +173,11 @@ export default function MonthStatsScreen({ route }: Props) {
                 <DataTable.Title numeric>Minút</DataTable.Title>
                 <DataTable.Title numeric>Priemer</DataTable.Title>
               </DataTable.Header>
-              {byType.map(r => (
+              {byType.map((r) => (
                 <DataTable.Row key={r.type}>
-                  <DataTable.Cell>{TYPE_ICON[r.type]} {r.type}</DataTable.Cell>
+                  <DataTable.Cell>
+                    {TYPE_ICON[r.type]} {r.type}
+                  </DataTable.Cell>
                   <DataTable.Cell numeric>{r.sessions}</DataTable.Cell>
                   <DataTable.Cell numeric>{r.minutes}</DataTable.Cell>
                   <DataTable.Cell numeric>{r.avg}</DataTable.Cell>
@@ -181,7 +192,7 @@ export default function MonthStatsScreen({ route }: Props) {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Denný priebeh (minúty)</Title>
-          {daily.every(d => d.minutes === 0) ? (
+          {daily.every((d) => d.minutes === 0) ? (
             <Paragraph>Žiadne dáta.</Paragraph>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator>
@@ -191,12 +202,17 @@ export default function MonthStatsScreen({ route }: Props) {
                     <View
                       style={[
                         styles.bar,
-                        { height: Math.max(6, Math.round((d.minutes / maxDaily) * 160)), width: barWidth },
+                        {
+                          height: Math.max(6, Math.round((d.minutes / maxDaily) * 160)),
+                          width: barWidth,
+                        },
                       ]}
                     />
-                    {(i % 5 === 0 || i === daily.length - 1)
-                      ? <Text style={styles.barX}>{pad2(d.dayNum)}</Text>
-                      : <View style={{ height: 16 }} />}
+                    {i % 5 === 0 || i === daily.length - 1 ? (
+                      <Text style={styles.barX}>{pad2(d.dayNum)}</Text>
+                    ) : (
+                      <View style={{ height: 16 }} />
+                    )}
                   </View>
                 ))}
               </View>

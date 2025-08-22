@@ -7,6 +7,10 @@
     },
     "production": {
       "distribution": "store"
+    },
+    "light": {
+      "distribution": "internal",
+      "env": { "LIGHT": "1" }
     }
   }
 }

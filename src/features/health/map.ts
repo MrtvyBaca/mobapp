@@ -1,6 +1,8 @@
 import { type TrainingDraft } from '@/shared/lib/training';
 
-function toMinutes(sec: number) { return Math.round(sec / 60); }
+function toMinutes(sec: number) {
+  return Math.round(sec / 60);
+}
 
 function normalizeType(hwType: string): TrainingDraft['type'] {
   const t = hwType.toLowerCase();
@@ -13,7 +15,10 @@ function normalizeType(hwType: string): TrainingDraft['type'] {
 
 /** Z Health workoutu sprav TrainingDraft */
 export function mapHealthToTraining(hw: {
-  id: string; start: string; end: string; type: string;
+  id: string;
+  start: string;
+  end: string;
+  type: string;
   distanceMeters?: number;
   caloriesKcal?: number;
 }): TrainingDraft {
@@ -21,7 +26,7 @@ export function mapHealthToTraining(hw: {
   const typ = normalizeType(hw.type);
 
   return {
-    date: new Date(hw.start).toISOString().slice(0,10), // YYYY-MM-DD
+    date: new Date(hw.start).toISOString().slice(0, 10), // YYYY-MM-DD
     duration: toMinutes(durSec),
     description: 'Import z Health',
     category: 'Kondice',

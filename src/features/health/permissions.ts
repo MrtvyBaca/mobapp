@@ -19,9 +19,9 @@ const REQUIRED: Permission[] = [
 export async function requestHealthPermissions(): Promise<boolean> {
   const granted = await getGrantedPermissions();
   const isGranted = (p: Permission) =>
-    granted.some(g => g.accessType === p.accessType && g.recordType === p.recordType);
+    granted.some((g) => g.accessType === p.accessType && g.recordType === p.recordType);
 
-  const missing: Permission[] = REQUIRED.filter(p => !isGranted(p));
+  const missing: Permission[] = REQUIRED.filter((p) => !isGranted(p));
 
   if (missing.length === 0) {
     console.log('[HC] permissions: all granted');

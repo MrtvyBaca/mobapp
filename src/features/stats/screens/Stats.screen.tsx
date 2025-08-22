@@ -1,9 +1,7 @@
 // screens/StatistikyScreen.tsx
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import {
-  Card, Title, Paragraph, DataTable, SegmentedButtons,
-} from 'react-native-paper';
+import { Card, Title, Paragraph, DataTable, SegmentedButtons } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import type { StatsStackParamList } from '@/navigation/types';
@@ -35,60 +33,73 @@ export default function StatistikyScreen() {
   const navigation = useNavigation<Nav>();
   const [mode, setMode] = React.useState<Mode>('month');
   const [records, setRecords] = React.useState<TrainingRecord[]>([]);
-  const [avgReadiness, setAvgReadiness] = React.useState<{avg:number; n:number} | null>(null);
+  const [avgReadiness, setAvgReadiness] = React.useState<{ avg: number; n: number } | null>(null);
   // načítanie záznamov zo storage (v2) – pripravené na neskorší backend
   const load = React.useCallback(async () => {
     const list = await getAll();
     setRecords(list);
   }, []);
-  useFocusEffect(React.useCallback(() => { load(); }, [load]));
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   const today = new Date();
   const currentMonthKey = toMonthKey(today);
   const currentWeekKey = weekStartKey(today);
 
   // záznamy v aktuálnom mesiaci/týždni
-  const inCurrent = records.filter(r =>
+  const inCurrent = records.filter((r) =>
     mode === 'month'
       ? toMonthKey(r.date) === currentMonthKey
-      : weekStartKey(r.date) === currentWeekKey
+      : weekStartKey(r.date) === currentWeekKey,
   );
 
   const totalSessions = inCurrent.length;
   const totalMinutes = inCurrent.reduce((s, r) => s + Number(r.duration || 0), 0);
 
   // rozbitie podľa typu (široké kategórie) – používa spoločné inferType
-  const byType = inCurrent.reduce<Record<string, { sessions: number; minutes: number }>>((acc, r) => {
-    const t = inferType(r);
-    if (!acc[t]) acc[t] = { sessions: 0, minutes: 0 };
-    acc[t].sessions += 1;
-    acc[t].minutes += Number(r.duration || 0);
-    return acc;
-  }, {});
+  const byType = inCurrent.reduce<Record<string, { sessions: number; minutes: number }>>(
+    (acc, r) => {
+      const t = inferType(r);
+      if (!acc[t]) acc[t] = { sessions: 0, minutes: 0 };
+      acc[t].sessions += 1;
+      acc[t].minutes += Number(r.duration || 0);
+      return acc;
+    },
+    {},
+  );
   const typeRows = Object.entries(byType)
     .sort((a, b) => b[1].minutes - a[1].minutes)
     .map(([type, v]) => ({ type, ...v, avg: v.sessions ? Math.round(v.minutes / v.sessions) : 0 }));
   const loadReadiness = React.useCallback(async () => {
-  const today = new Date();
-  if (mode === 'month') {
-    const key = toMonthKey(today); // YYYY-MM
-    const start = `${key}-01`;
-    const end = `${key}-31`;
-    const list = await getRangeInclusive(start, end);
-    const n = list.length;
-    const avg = n ? Math.round((list.reduce((s,e)=>s+e.score,0)/n)*10)/10 : 0;
-    setAvgReadiness({ avg, n });
-  } else {
-    const start = weekStartKey(today); // pondelok
-    const endDate = new Date(mondayOf(today)); endDate.setDate(endDate.getDate()+6);
-    const end = toDateKey(endDate);
-    const list = await getRangeInclusive(start, end);
-    const n = list.length;
-    const avg = n ? Math.round((list.reduce((s,e)=>s+e.score,0)/n)*10)/10 : 0;
-    setAvgReadiness({ avg, n });
-  }
-}, [mode]);
-useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, loadReadiness]));
+    const today = new Date();
+    if (mode === 'month') {
+      const key = toMonthKey(today); // YYYY-MM
+      const start = `${key}-01`;
+      const end = `${key}-31`;
+      const list = await getRangeInclusive(start, end);
+      const n = list.length;
+      const avg = n ? Math.round((list.reduce((s, e) => s + e.score, 0) / n) * 10) / 10 : 0;
+      setAvgReadiness({ avg, n });
+    } else {
+      const start = weekStartKey(today); // pondelok
+      const endDate = new Date(mondayOf(today));
+      endDate.setDate(endDate.getDate() + 6);
+      const end = toDateKey(endDate);
+      const list = await getRangeInclusive(start, end);
+      const n = list.length;
+      const avg = n ? Math.round((list.reduce((s, e) => s + e.score, 0) / n) * 10) / 10 : 0;
+      setAvgReadiness({ avg, n });
+    }
+  }, [mode]);
+  useFocusEffect(
+    React.useCallback(() => {
+      load();
+      loadReadiness();
+    }, [load, loadReadiness]),
+  );
   // ---- Posledné obdobia (kľúče) ----
   const recentPeriods = React.useMemo(() => {
     if (mode === 'month') {
@@ -98,8 +109,8 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
         keys.push(`${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}`);
         dt.setMonth(dt.getMonth() - 1);
       }
-      return keys.map(k => {
-        const subset = records.filter(r => toMonthKey(r.date) === k);
+      return keys.map((k) => {
+        const subset = records.filter((r) => toMonthKey(r.date) === k);
         const sessions = subset.length;
         const minutes = subset.reduce((s, r) => s + Number(r.duration || 0), 0);
         return { key: k, sessions, minutes, avg: sessions ? Math.round(minutes / sessions) : 0 };
@@ -112,8 +123,8 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
         monday = new Date(monday);
         monday.setDate(monday.getDate() - 7);
       }
-      return keys.map(k => {
-        const subset = records.filter(r => weekStartKey(r.date) === k);
+      return keys.map((k) => {
+        const subset = records.filter((r) => weekStartKey(r.date) === k);
         const sessions = subset.length;
         const minutes = subset.reduce((s, r) => s + Number(r.duration || 0), 0);
         return { key: k, sessions, minutes, avg: sessions ? Math.round(minutes / sessions) : 0 };
@@ -132,7 +143,7 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
             onValueChange={(v) => setMode(v as Mode)}
             buttons={[
               { value: 'month', label: 'Mesačne' },
-              { value: 'week',  label: 'Týždenne' },
+              { value: 'week', label: 'Týždenne' },
             ]}
           />
         </Card.Content>
@@ -140,15 +151,17 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
 
       {/* Súhrn */}
       <Card style={styles.card}>
-  <Card.Content>
-    <Title style={styles.sectionTitle}>Readiness (priemer)</Title>
-    {avgReadiness?.n ? (
-      <Paragraph>{avgReadiness.avg} / 10 • záznamov: {avgReadiness.n}</Paragraph>
-    ) : (
-      <Paragraph>Žiadne dáta pre toto obdobie.</Paragraph>
-    )}
-  </Card.Content>
-</Card>
+        <Card.Content>
+          <Title style={styles.sectionTitle}>Readiness (priemer)</Title>
+          {avgReadiness?.n ? (
+            <Paragraph>
+              {avgReadiness.avg} / 10 • záznamov: {avgReadiness.n}
+            </Paragraph>
+          ) : (
+            <Paragraph>Žiadne dáta pre toto obdobie.</Paragraph>
+          )}
+        </Card.Content>
+      </Card>
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>
@@ -165,7 +178,9 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
             <>
               <Paragraph>Tréningov: {totalSessions}</Paragraph>
               <Paragraph>Minút spolu: {totalMinutes}</Paragraph>
-              <Paragraph>Priemer na tréning: {Math.round(totalMinutes / totalSessions)} min</Paragraph>
+              <Paragraph>
+                Priemer na tréning: {Math.round(totalMinutes / totalSessions)} min
+              </Paragraph>
             </>
           ) : (
             <Paragraph>Žiadne dáta v tomto období.</Paragraph>
@@ -187,7 +202,7 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
                 <DataTable.Title numeric>Minút</DataTable.Title>
                 <DataTable.Title numeric>Priemer</DataTable.Title>
               </DataTable.Header>
-              {typeRows.map(r => (
+              {typeRows.map((r) => (
                 <DataTable.Row key={r.type}>
                   <DataTable.Cell>{r.type}</DataTable.Cell>
                   <DataTable.Cell numeric>{r.sessions}</DataTable.Cell>
@@ -216,7 +231,7 @@ useFocusEffect(React.useCallback(() => { load(); loadReadiness(); }, [load, load
                 <DataTable.Title numeric>Minút</DataTable.Title>
                 <DataTable.Title numeric>Priemer</DataTable.Title>
               </DataTable.Header>
-              {recentPeriods.map(p => (
+              {recentPeriods.map((p) => (
                 <DataTable.Row
                   key={p.key}
                   onPress={() =>

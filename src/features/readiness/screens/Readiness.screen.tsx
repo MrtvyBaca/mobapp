@@ -21,17 +21,21 @@ const styles = StyleSheet.create({
 
 type Q = { key: keyof ReadinessAnswers; label: string; negative?: boolean };
 const QUESTIONS: Q[] = [
-  { key: 'trainingLoadYesterday', label: 'Training load yesterday (0=žiadny, 10=extrémny)', negative: true },
-  { key: 'muscleSoreness',        label: 'Muscle soreness (0=žiadne, 10=veľké)', negative: true },
-  { key: 'muscleFatigue',         label: 'Muscle fatigue (0=žiadna, 10=veľká)', negative: true },
-  { key: 'mentalStress',          label: 'Mental stress (0=nízky, 10=vysoký)', negative: true },
-  { key: 'injury',                label: 'Aktuálne zranenie (0=nie, 10=výrazné)', negative: true },
-  { key: 'illness',               label: 'Aktuálne ochorenie (0=nie, 10=výrazné)', negative: true },
-  { key: 'sleepLastNight',        label: 'Sleep last night (0=zlé, 10=skvelé)' },
-  { key: 'nutritionQuality',      label: 'Food & beverage yesterday (0=zlé, 10=skvelé)' },
-  { key: 'mood24h',               label: 'Mood last 24h (0=zlé, 10=skvelé)' },
-  { key: 'recoveryEnergyToday',   label: 'Recovery & energy today (0=nízka, 10=vysoká)' },
-  { key: 'menstrual',             label: 'Menštruačné krvácanie (0=nie, 10=silné)', negative: true },
+  {
+    key: 'trainingLoadYesterday',
+    label: 'Training load yesterday (0=žiadny, 10=extrémny)',
+    negative: true,
+  },
+  { key: 'muscleSoreness', label: 'Muscle soreness (0=žiadne, 10=veľké)', negative: true },
+  { key: 'muscleFatigue', label: 'Muscle fatigue (0=žiadna, 10=veľká)', negative: true },
+  { key: 'mentalStress', label: 'Mental stress (0=nízky, 10=vysoký)', negative: true },
+  { key: 'injury', label: 'Aktuálne zranenie (0=nie, 10=výrazné)', negative: true },
+  { key: 'illness', label: 'Aktuálne ochorenie (0=nie, 10=výrazné)', negative: true },
+  { key: 'sleepLastNight', label: 'Sleep last night (0=zlé, 10=skvelé)' },
+  { key: 'nutritionQuality', label: 'Food & beverage yesterday (0=zlé, 10=skvelé)' },
+  { key: 'mood24h', label: 'Mood last 24h (0=zlé, 10=skvelé)' },
+  { key: 'recoveryEnergyToday', label: 'Recovery & energy today (0=nízka, 10=vysoká)' },
+  { key: 'menstrual', label: 'Menštruačné krvácanie (0=nie, 10=silné)', negative: true },
 ];
 
 export default function ReadinessScreen() {
@@ -47,10 +51,12 @@ export default function ReadinessScreen() {
     setAnswers(existing?.answers ?? defaultAnswers());
   }, []);
 
-  React.useEffect(() => { loadForDate(date); }, [date, loadForDate]);
+  React.useEffect(() => {
+    loadForDate(date);
+  }, [date, loadForDate]);
 
   const setVal = (key: keyof ReadinessAnswers, v: number) => {
-    setAnswers(prev => ({ ...prev, [key]: Math.round(v) }));
+    setAnswers((prev) => ({ ...prev, [key]: Math.round(v) }));
   };
 
   const onChangeDate = (e: DateTimePickerEvent, selected?: Date) => {
@@ -101,7 +107,7 @@ export default function ReadinessScreen() {
 
       <Card style={styles.card}>
         <Card.Content>
-          {QUESTIONS.map(q => (
+          {QUESTIONS.map((q) => (
             <View key={q.key} style={styles.row}>
               <View style={styles.labelRow}>
                 <Paragraph>{q.label}</Paragraph>

@@ -1,0 +1,84 @@
+{
+  "screens": {
+    "trainingsFeed": {
+      "title": "Workouts",
+      "subtitle": "No workouts yet",
+      "addnew": "Add your first workout"
+    },
+    "addTraining": {
+      "title": "Add Workout",
+      "subtitle": "Add a new workout",
+      "date": "Date",
+      "time": "Time",
+      "type": "Activity Type",
+      "category": "Category",
+      "duration": "Duration",
+      "info": "Additional Info",
+      "studyinfo": "What did you learn?",
+      "otherinfo": "Other information (required)",
+      "ice": "Ice",
+      "condition": "Condition",
+      "classroom": "Classroom",
+      "other": "Other",
+      "typeOnIce": "On-ice type",
+      "individual": "Individual",
+      "invidual": "Individual",
+      "team": "Team Training",
+      "match": "Match",
+      "weight": "Weight Training",
+      "cardio": "Cardio",
+      "mobility": "Mobility",
+      "clear": "Clear",
+      "save": "Save",
+      "traininglenerror": "Training duration must be at least 1 minute.",
+      "otherinfoerror": "Other information is required.",
+      "setDurationTitle": "Set duration",
+      "setDurationA11y": "Set duration"
+    }
+  },
+  "tabs": {
+    "trainingsFeed": "Home",
+    "addTraining": "Add Workout"
+  },
+  "enums": {
+    "type": {
+      "Led": "Ice",
+      "Silový": "Weight Training",
+      "Kardio": "Cardio",
+      "Mobilita": "Mobility",
+      "Učebná": "Classroom",
+      "Iné": "Other"
+    },
+    "category": {
+      "Led": "Ice",
+      "Kondice": "Condition",
+      "Ucebna": "Classroom",
+      "Jine": "Other"
+    },
+    "group": {
+      "Silovy": "Weight Training",
+      "Kardio": "Cardio",
+      "Mobilita": "Mobility",
+      "Led": "Ice"
+    },
+    "subtype": {
+      "Individuál": "Individual",
+      "Tímový": "Team",
+      "Zápas": "Match"
+    }
+  },
+  "units": {
+    "hourShort": "h",
+    "minShort": "m",
+    "secShort": "s",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes"
+  },
+  "errors": {
+    "unknown": "Something went wrong.",
+    "saveFailed": "Failed to save the workout.",
+    "dateFormat": "Use the YYYY-MM-DD format.",
+    "hcNotLinked": "The package 'react-native-health-connect' doesn't seem to be linked.",
+    "javaHome": "JAVA_HOME is not set."
+  }
+}

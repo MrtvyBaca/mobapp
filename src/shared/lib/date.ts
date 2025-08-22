@@ -58,14 +58,19 @@ export function weekStartKey(input: DateInput): string {
 /** ISO týždeň (W01–W53). ISO sa počíta v UTC (štandard).
  *  Vráti aj skratku roka `yy` a kód `YYYY-Www`.
  */
-export function isoWeekInfo(input: DateInput): { year: number; week: number; yy: string; code: string } {
+export function isoWeekInfo(input: DateInput): {
+  year: number;
+  week: number;
+  yy: string;
+  code: string;
+} {
   const d0 = parseDate(input);
   const d = new Date(Date.UTC(d0.getFullYear(), d0.getMonth(), d0.getDate()));
   const wd = d.getUTCDay() === 0 ? 7 : d.getUTCDay(); // Ne -> 7
   d.setUTCDate(d.getUTCDate() + 4 - wd); // štvrtok ISO týždňa
   const year = d.getUTCFullYear();
   const yearStart = new Date(Date.UTC(year, 0, 1));
-  const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   const yy = String(year).slice(-2);
   return { year, week, yy, code: `${year}-W${pad2(week)}` };
 }

@@ -35,8 +35,14 @@ export default function DebugDataScreen() {
     setReadiness(await getReadiness());
   }, []);
 
-  useFocusEffect(React.useCallback(() => { reload(); }, [reload]));
-  React.useEffect(() => { reload(); }, [reload]);
+  useFocusEffect(
+    React.useCallback(() => {
+      reload();
+    }, [reload]),
+  );
+  React.useEffect(() => {
+    reload();
+  }, [reload]);
 
   const exportData = React.useCallback(async () => {
     const trainingsData = await getTrainings();
@@ -57,9 +63,9 @@ export default function DebugDataScreen() {
     ];
     const granted = await getGrantedPermissions();
     const isGranted = (p: Permission) =>
-      granted.some(g => g.accessType === p.accessType && g.recordType === p.recordType);
+      granted.some((g) => g.accessType === p.accessType && g.recordType === p.recordType);
 
-    const missing = required.filter(p => !isGranted(p));
+    const missing = required.filter((p) => !isGranted(p));
     if (missing.length === 0) return true;
 
     await requestPermission(missing);
@@ -67,79 +73,82 @@ export default function DebugDataScreen() {
   }, []);
 
   // ⬇️ vloží 30-min “beh” + ~1000 krokov do HC
-const insertDummyHCData = React.useCallback(async () => {
-  if (Platform.OS !== 'android') {
-    Alert.alert('Debug', 'Health Connect je len na Androide.');
-    return;
-  }
-  setBusy(true);
-  try {
-    const ok = await ensureWritePerms();
-    if (!ok) throw new Error('Chýbajú povolenia pre zápis do Health Connect.');
+  const insertDummyHCData = React.useCallback(async () => {
+    if (Platform.OS !== 'android') {
+      Alert.alert('Debug', 'Health Connect je len na Androide.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const ok = await ensureWritePerms();
+      if (!ok) throw new Error('Chýbajú povolenia pre zápis do Health Connect.');
 
-    const end = new Date(); // teraz
-    const start = new Date(end.getTime() - 30 * 60 * 1000); // 30 min dozadu
-    const startISO = start.toISOString();
-    const endISO = end.toISOString();
+      const end = new Date(); // teraz
+      const start = new Date(end.getTime() - 30 * 60 * 1000); // 30 min dozadu
+      const startISO = start.toISOString();
+      const endISO = end.toISOString();
 
-    const RUNNING =
-      (ExerciseType as any)?.running ??
-      (ExerciseType as any)?.RUNNING ??
-      8;
+      const RUNNING = (ExerciseType as any)?.running ?? (ExerciseType as any)?.RUNNING ?? 8;
 
-    // ⬇️ tu si definuj stepsCount
-    const stepsCount = 1000;
+      // ⬇️ tu si definuj stepsCount
+      const stepsCount = 1000;
 
-    // 1) ExerciseSession
-    await insertRecords([
-      {
-        recordType: 'ExerciseSession',
-        startTime: startISO,
-        endTime: endISO,
-        exerciseType: RUNNING,
-        title: 'Test run',
-      },
-    ]);
+      // 1) ExerciseSession
+      await insertRecords([
+        {
+          recordType: 'ExerciseSession',
+          startTime: startISO,
+          endTime: endISO,
+          exerciseType: RUNNING,
+          title: 'Test run',
+        },
+      ]);
 
-    // 2) Steps
-    await insertRecords([
-      {
-        recordType: 'Steps',
-        startTime: startISO,
-        endTime: endISO,
-        count: stepsCount,
-      },
-    ]);
+      // 2) Steps
+      await insertRecords([
+        {
+          recordType: 'Steps',
+          startTime: startISO,
+          endTime: endISO,
+          count: stepsCount,
+        },
+      ]);
 
-    Alert.alert(
-      'Debug',
-      `Vložené demo dáta do Health Connect:\n- ExerciseSession (running)\n- Steps: ${stepsCount}`
-    );
-  } catch (e: any) {
-    console.log('[Debug] insertDummyHCData error:', e);
-    Alert.alert('Debug', e?.message ?? 'Zápis demo dát zlyhal.');
-  } finally {
-    setBusy(false);
-  }
-}, [ensureWritePerms]);
+      Alert.alert(
+        'Debug',
+        `Vložené demo dáta do Health Connect:\n- ExerciseSession (running)\n- Steps: ${stepsCount}`,
+      );
+    } catch (e: any) {
+      console.log('[Debug] insertDummyHCData error:', e);
+      Alert.alert('Debug', e?.message ?? 'Zápis demo dát zlyhal.');
+    } finally {
+      setBusy(false);
+    }
+  }, [ensureWritePerms]);
 
   return (
     <ScrollView contentContainerStyle={s.screen}>
       <Card>
         <Card.Content>
           <Title>Trainings</Title>
-          <Text selectable style={s.mono}>{JSON.stringify(trainings, null, 2)}</Text>
+          <Text selectable style={s.mono}>
+            {JSON.stringify(trainings, null, 2)}
+          </Text>
         </Card.Content>
       </Card>
 
       <Card>
         <Card.Content>
           <Title>Readiness</Title>
-          <Text selectable style={s.mono}>{JSON.stringify(readiness, null, 2)}</Text>
+          <Text selectable style={s.mono}>
+            {JSON.stringify(readiness, null, 2)}
+          </Text>
         </Card.Content>
       </Card>
 
-      <Button onPress={reload} style={{ marginTop: 8 }} disabled={busy}>Obnoviť</Button>
+      <Button onPress={reload} style={{ marginTop: 8 }} disabled={busy}>
+        Obnoviť
+      </Button>
       <Button mode="contained" onPress={exportData} style={{ marginTop: 8 }} disabled={busy}>
         Export JSON
       </Button>

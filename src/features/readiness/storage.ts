@@ -7,7 +7,7 @@ import {
   type ReadinessAnswers,
 } from '@/shared/lib/readiness';
 
-const KEY_V2 = 'readiness_v2';                  // nový kľúč so schemaVersion
+const KEY_V2 = 'readiness_v2'; // nový kľúč so schemaVersion
 const LEGACY_KEYS = ['readiness_v1', 'readiness']; // pre migráciu zo starších verzií
 // v oboch storage súboroch
 import { getUserId } from '@/shared/lib/user';
@@ -19,13 +19,15 @@ async function getCurrentUserId(): Promise<string> {
 // --- robustné ID (UUID, fallback ak nie je k dispozícii) ---
 function makeId(): string {
   const c = (globalThis as any).crypto;
-  return c?.randomUUID ? c.randomUUID() : `rid_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  return c?.randomUUID
+    ? c.randomUUID()
+    : `rid_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 export interface Repo<T, Draft> {
   getAll(): Promise<T[]>;
   getRange(from: string, to: string): Promise<T[]>;
   upsert(draft: Draft): Promise<T>;
-  update(id: string, patch: Partial<Draft>): Promise<T|null>;
+  update(id: string, patch: Partial<Draft>): Promise<T | null>;
   remove(id: string): Promise<void>; // soft delete odporúčané
 }
 
@@ -63,21 +65,24 @@ async function migrateLegacyIfNeeded(): Promise<ReadinessEntry[] | null> {
       const migrated: ReadinessEntry[] = (legacy ?? [])
         .map((old) => {
           const date: string | undefined =
-            old?.date || (typeof old?.id === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(old.id) ? old.id : undefined);
+            old?.date ||
+            (typeof old?.id === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(old.id)
+              ? old.id
+              : undefined);
           if (!date) return null;
 
           const ans: ReadinessAnswers = {
             trainingLoadYesterday: Number(old?.answers?.trainingLoadYesterday ?? 5),
-            muscleSoreness:        Number(old?.answers?.muscleSoreness ?? 5),
-            muscleFatigue:         Number(old?.answers?.muscleFatigue ?? 5),
-            mentalStress:          Number(old?.answers?.mentalStress ?? 5),
-            injury:                Number(old?.answers?.injury ?? 0),
-            illness:               Number(old?.answers?.illness ?? 0),
-            sleepLastNight:        Number(old?.answers?.sleepLastNight ?? 5),
-            nutritionQuality:      Number(old?.answers?.nutritionQuality ?? 5),
-            mood24h:               Number(old?.answers?.mood24h ?? 5),
-            recoveryEnergyToday:   Number(old?.answers?.recoveryEnergyToday ?? 5),
-            menstrual:             Number(old?.answers?.menstrual ?? 0),
+            muscleSoreness: Number(old?.answers?.muscleSoreness ?? 5),
+            muscleFatigue: Number(old?.answers?.muscleFatigue ?? 5),
+            mentalStress: Number(old?.answers?.mentalStress ?? 5),
+            injury: Number(old?.answers?.injury ?? 0),
+            illness: Number(old?.answers?.illness ?? 0),
+            sleepLastNight: Number(old?.answers?.sleepLastNight ?? 5),
+            nutritionQuality: Number(old?.answers?.nutritionQuality ?? 5),
+            mood24h: Number(old?.answers?.mood24h ?? 5),
+            recoveryEnergyToday: Number(old?.answers?.recoveryEnergyToday ?? 5),
+            menstrual: Number(old?.answers?.menstrual ?? 0),
           };
 
           return {
@@ -110,21 +115,24 @@ export async function getAll(): Promise<ReadinessEntry[]> {
   const userId = await getCurrentUserId();
   const list = await readAllV2();
   return list
-    .filter(e => e.userId === userId && !e.deleted)
+    .filter((e) => e.userId === userId && !e.deleted)
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export async function getByDate(date: string): Promise<ReadinessEntry | null> {
   const userId = await getCurrentUserId();
   const list = await readAllV2();
-  return list.find(e => e.userId === userId && e.date === date && !e.deleted) ?? null;
+  return list.find((e) => e.userId === userId && e.date === date && !e.deleted) ?? null;
 }
 
-export async function upsertForDate(date: string, answers: ReadinessAnswers): Promise<ReadinessEntry> {
+export async function upsertForDate(
+  date: string,
+  answers: ReadinessAnswers,
+): Promise<ReadinessEntry> {
   const userId = await getCurrentUserId();
   const list = await readAllV2();
   const now = new Date().toISOString();
-  const idx = list.findIndex(e => e.userId === userId && e.date === date && !e.deleted);
+  const idx = list.findIndex((e) => e.userId === userId && e.date === date && !e.deleted);
   const score = computeReadinessScore(answers);
 
   if (idx >= 0) {
@@ -150,11 +158,14 @@ export async function upsertForDate(date: string, answers: ReadinessAnswers): Pr
   return entry;
 }
 
-export async function getRangeInclusive(startDate: string, endDate: string): Promise<ReadinessEntry[]> {
+export async function getRangeInclusive(
+  startDate: string,
+  endDate: string,
+): Promise<ReadinessEntry[]> {
   const userId = await getCurrentUserId();
   const list = await readAllV2();
   return list
-    .filter(e => e.userId === userId && !e.deleted && e.date >= startDate && e.date <= endDate)
+    .filter((e) => e.userId === userId && !e.deleted && e.date >= startDate && e.date <= endDate)
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
@@ -162,7 +173,7 @@ export async function getRangeInclusive(startDate: string, endDate: string): Pro
 export async function deleteByDate(date: string): Promise<void> {
   const userId = await getCurrentUserId();
   const list = await readAllV2();
-  const idx = list.findIndex(e => e.userId === userId && e.date === date && !e.deleted);
+  const idx = list.findIndex((e) => e.userId === userId && e.date === date && !e.deleted);
   if (idx < 0) return;
   list[idx] = { ...list[idx], deleted: true, updatedAt: new Date().toISOString() } as any;
   await writeAllV2(list);

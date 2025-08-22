@@ -2,7 +2,7 @@
 
 // ---- Široké kategórie pre štatistiky ----
 export type TrainingType =
-  | 'Led'        // 🏒 nový typ pre ľad
+  | 'Led' // 🏒 nový typ pre ľad
   | 'Silový'
   | 'Beh'
   | 'Bicykel'
@@ -18,6 +18,7 @@ export type TrainingType =
   | 'Bežky'
   | 'Mobilita'
   | 'Učebná'
+  | 'Kardio'
   | 'Iné';
 export type TrackPoint = { lat: number; lon: number; t: number; alt?: number };
 // shared/lib/training.ts
@@ -27,8 +28,8 @@ export type TrainingRecord = {
   date: string;
   duration: number;
   description?: string;
-  category?: 'Led'|'Kondice'|'Ucebna'|'Jine';
-  group?: 'Led'|'Silovy'|'Kardio'|'Mobilita';
+  category?: 'Led' | 'Kondice' | 'Ucebna' | 'Jine';
+  group?: 'Led' | 'Silovy' | 'Kardio' | 'Mobilita';
   subtype?: string;
   type?: TrainingType;
   createdAt: string;
@@ -47,52 +48,87 @@ export interface Repo<T, Draft> {
   getAll(): Promise<T[]>;
   getRange(from: string, to: string): Promise<T[]>;
   upsert(draft: Draft): Promise<T>;
-  update(id: string, patch: Partial<Draft>): Promise<T|null>;
+  update(id: string, patch: Partial<Draft>): Promise<T | null>;
   remove(id: string): Promise<void>; // soft delete odporúčané
 }
 
 export type TrainingDraft = Omit<TrainingRecord, 'id' | 'createdAt' | 'updatedAt' | 'userId'>;
 
 // ---- Chips – podtypy do formulára ----
-export const LED_SUBTYPES = [
-  'Individuál',
-  'Tímový',
-  'Zápas',
-] as const;
+export const LED_SUBTYPES = ['Individuál', 'Tímový', 'Zápas'] as const;
 
 export const SILOVY_SUBTYPES = [
-  'Core', 'Horná časť', 'Nohy', 'Celé telo',
-  'Push', 'Pull', 'Glute/Ham',
-  'Kettlebell', 'TRX', 'Váha vlastného tela',
+  'Core',
+  'Horná časť',
+  'Nohy',
+  'Celé telo',
+  'Push',
+  'Pull',
+  'Glute/Ham',
+  'Kettlebell',
+  'TRX',
+  'Váha vlastného tela',
   'Olympijské zdvihy',
 ] as const;
 
 export const KARDIO_SUBTYPES = [
-  'Beh – ľahký', 'Beh – intervaly', 'Beh – tempo', 'Dlhý beh',
-  'Bicykel – cesta', 'Bicykel – MTB', 'Spinning',
-  'Veslo (erg)', 'Eliptický trenažér', 'Švihadlo',
-  'AirBike', 'SkiErg',
-  'Turistika / Trail', 'Korčule', 'Bežky',
-  'Plávanie', 'Chôdza',
+  'Beh – ľahký',
+  'Beh – intervaly',
+  'Beh – tempo',
+  'Dlhý beh',
+  'Bicykel – cesta',
+  'Bicykel – MTB',
+  'Spinning',
+  'Veslo (erg)',
+  'Eliptický trenažér',
+  'Švihadlo',
+  'AirBike',
+  'SkiErg',
+  'Turistika / Trail',
+  'Korčule',
+  'Bežky',
+  'Plávanie',
+  'Chôdza',
 ] as const;
 
 export const MOBILITA_SUBTYPES = [
-  'Joga', 'Stretching', 'Pilates', 'Foam rolling', 'Fyziocviky',
-  'Bedrá', 'Ramená', 'Hrudník', 'Členky',
+  'Joga',
+  'Stretching',
+  'Pilates',
+  'Foam rolling',
+  'Fyziocviky',
+  'Bedrá',
+  'Ramená',
+  'Hrudník',
+  'Členky',
 ] as const;
 
 // ---- (voliteľné) ikonky do UI ----
 export const TYPE_ICON: Record<TrainingType, string> = {
   Led: '🏒',
-  Silový: '🏋️', Beh: '🏃', Bicykel: '🚴', Chôdza: '🚶', Plávanie: '🏊',
-  Veslo: '🚣', Eliptický: '🏃‍♂️', Švihadlo: '🤸', AirBike: '🚴‍♂️', SkiErg: '🎿',
-  Turistika: '🥾', Korčule: '🛼', Bežky: '⛷️', Mobilita: '🧘', Učebná: '📚', Iné: '✨',
+  Silový: '🏋️',
+  Beh: '🏃',
+  Bicykel: '🚴',
+  Chôdza: '🚶',
+  Plávanie: '🏊',
+  Veslo: '🚣',
+  Eliptický: '🏃‍♂️',
+  Švihadlo: '🤸',
+  AirBike: '🚴‍♂️',
+  SkiErg: '🎿',
+  Turistika: '🥾',
+  Korčule: '🛼',
+  Bežky: '⛷️',
+  Mobilita: '🧘',
+  Učebná: '📚',
+  Kardio: '❤️‍🔥',
+  Iné: '✨',
 };
 
 // ---- Mapovanie (group, subtype) → široká kategória ----
 export function deriveNormalizedType(
   group?: 'Led' | 'Silovy' | 'Kardio' | 'Mobilita',
-  subtype?: string
+  subtype?: string,
 ): TrainingType {
   if (!group) return 'Iné';
 
@@ -100,23 +136,27 @@ export function deriveNormalizedType(
   if (group === 'Silovy') return 'Silový';
   if (group === 'Mobilita') return 'Mobilita';
 
-  // Kardio:
-  const s = (subtype || '').toLowerCase();
-  if (s.startsWith('beh')) return 'Beh';
-  if (s.startsWith('bicykel') || s.includes('spinning') || s.includes('mtb') || s.includes('cesta')) return 'Bicykel';
-  if (s.startsWith('plav')) return 'Plávanie';
-  if (s.startsWith('chôdza') || s.startsWith('chodza')) return 'Chôdza';
-  if (s.includes('veslo') || s.includes('erg')) return 'Veslo';
-  if (s.includes('elipt')) return 'Eliptický';
-  if (s.includes('švihad') || s.includes('svihad')) return 'Švihadlo';
-  if (s.includes('airbike') || s.includes('assault')) return 'AirBike';
-  if (s.includes('skierg')) return 'SkiErg';
-  if (s.includes('turist') || s.includes('trail') || s.includes('hike')) return 'Turistika';
-  if (s.includes('korč') || s.includes('korcule') || s.includes('brusle') || s.includes('inline')) return 'Korčule';
-  if (s.includes('bežky') || s.includes('bezky')) return 'Bežky';
+  if (group === 'Kardio') {
+    const s = (subtype || '').toLowerCase().trim();
+    if (!s) return 'Kardio';                         // 👈 default bez subtypu
+    if (s.startsWith('beh')) return 'Beh';
+    if (s.startsWith('bicykel') || s.includes('spinning') || s.includes('mtb') || s.includes('cesta')) return 'Bicykel';
+    if (s.startsWith('plav')) return 'Plávanie';
+    if (s.startsWith('chôdza') || s.startsWith('chodza')) return 'Chôdza';
+    if (s.includes('veslo') || s.includes('erg')) return 'Veslo';
+    if (s.includes('elipt')) return 'Eliptický';
+    if (s.includes('švihad') || s.includes('svihad')) return 'Švihadlo';
+    if (s.includes('airbike') || s.includes('assault')) return 'AirBike';
+    if (s.includes('skierg')) return 'SkiErg';
+    if (s.includes('turist') || s.includes('trail') || s.includes('hike')) return 'Turistika';
+    if (s.includes('korč') || s.includes('korcule') || s.includes('brusle') || s.includes('inline')) return 'Korčule';
+    if (s.includes('bežky') || s.includes('bezky')) return 'Bežky';
+    return 'Kardio';                                   // 👈 fallback pri neznámom texte
+  }
 
   return 'Iné';
 }
+
 
 // ---- Univerzálne inferovanie typu (nové aj staré dáta) ----
 type InferInput = {
