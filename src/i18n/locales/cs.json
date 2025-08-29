@@ -1,84 +1,157 @@
 {
-  "screens": {
-    "trainingsFeed": {
-      "title": "Workouts",
-      "subtitle": "No workouts yet",
-      "addnew": "Add your first workout"
-    },
-    "addTraining": {
-      "title": "Add Workout",
-      "subtitle": "Add a new workout",
-      "date": "Date",
-      "time": "Time",
-      "type": "Activity Type",
-      "category": "Category",
-      "duration": "Duration",
-      "info": "Additional Info",
-      "studyinfo": "What did you learn?",
-      "otherinfo": "Other information (required)",
-      "ice": "Ice",
-      "condition": "Condition",
-      "classroom": "Classroom",
-      "other": "Other",
-      "typeOnIce": "On-ice type",
-      "individual": "Individual",
-      "invidual": "Individual",
-      "team": "Team Training",
-      "match": "Match",
-      "weight": "Weight Training",
-      "cardio": "Cardio",
-      "mobility": "Mobility",
-      "clear": "Clear",
-      "save": "Save",
-      "traininglenerror": "Training duration must be at least 1 minute.",
-      "otherinfoerror": "Other information is required.",
-      "setDurationTitle": "Set duration",
-      "setDurationA11y": "Set duration"
+    "settings" : {
+    "health": {
+      "desc" : "Integrace s Health Connect (Android) nebo Health (iOS).",
+      "title" : "Integrace se Health Connect",
+      "connect": "Připojit",
+      "disconnect": "Odpojit",
+      "syncNow": "Synchronizovat nyní"
     }
   },
+  "screens": {
+    "settings": {
+      "title": "Nastavení",
+      "language_cs": "Čeština",
+      "language_en": "Angličtina",
+      "language": "Jazyk"
+    },
+    "trainingsFeed": {
+      "title": "Tréninky",
+      "subtitle": "Zatím žádné tréninky",
+      "addnew": "Přidej svůj první trénink",
+      "goals": {
+        "header": "Měsíční cíle",
+        "edit": "Upravit",
+        "none": "Žádné aktivní cíle."
+      },
+      "readinnessTitle": "Regenerace",
+      "readinnessAdd": "Přidat"
+    },
+    "addTraining": {
+      "title": "Přidat trénink",
+      "subtitle": "Přidat nový trénink",
+      "date": "Datum",
+      "time": "Čas",
+      "type": "Typ aktivity",
+      "category": "Kategorie",
+      "duration": "Délka",
+      "info": "Další informace",
+      "studyinfo": "Co ses naučil?",
+      "otherinfo": "Jiné informace (povinné)",
+      "ice": "Led",
+      "condition": "Kondice",
+      "classroom": "Učebna",
+      "other": "Jiné",
+      "typeOnIce": "Typ na ledě",
+      "individual": "Individuální",
+      "invidual": "Individuální",
+      "team": "Týmový trénink",
+      "match": "Zápas",
+      "weight": "Silový trénink",
+      "cardio": "Kardio",
+      "mobility": "Mobilita",
+      "clear": "Vymazat",
+      "save": "Uložit",
+      "traininglenerror": "Délka tréninku musí být alespoň 1 minuta.",
+      "otherinfoerror": "Jiné informace jsou povinné.",
+      "setDurationTitle": "Nastavit délku",
+      "setDurationA11y": "Nastavit délku"
+    }
+  },
+  "readiness": {
+    "q": {
+      "load": "Zátěž včera (0–10, 10 = extrémní)",
+      "soreness": "Svalovka (0–10, 10 = velká)",
+      "fatigue": "Únava svalů (0–10, 10 = velká)",
+      "stress": "Stres (0–10, 10 = vysoký)",
+      "injury": "Zranění (0–10, 10 = výrazné)",
+      "illness": "Nemoc (0–10, 10 = výrazná)",
+      "sleep": "Spánek minulou noc (0–10, 10 = skvělý)",
+      "nutrition": "Strava včera (0–10, 10 = skvělá)",
+      "mood": "Nálada za 24h (0–10, 10 = skvělá)",
+      "energy": "Energie dnes (0–10, 10 = vysoká)",
+      "menstrual": "Menstruace (Ano/Ne)"
+    },
+    "title": "Denní Readiness"
+  },
+  "goals": {
+    "monthlyTarget": "Měsíční cíl",
+    "limitNote": "Max. 5 aktivních cílů",
+    "activeGoals": "Aktivní cíle",
+    "target": "Cíl",
+    "none": "Žádné cíle.",
+    "deleteConfirm": "Opravdu chceš smazat tento cíl?",
+    "left": "Zbývá"
+  },
   "tabs": {
-    "trainingsFeed": "Home",
-    "addTraining": "Add Workout"
+    "trainingsFeed": "Domů",
+    "addTraining": "Přidat trénink",
+    "monthlygoals": "Měsíční cíle",
+    "settings": "Nastavení"
   },
   "enums": {
     "type": {
-      "Led": "Ice",
-      "Silový": "Weight Training",
-      "Kardio": "Cardio",
-      "Mobilita": "Mobility",
-      "Učebná": "Classroom",
-      "Iné": "Other"
+      "Led": "Led",
+      "Silový": "Silový trénink",
+      "Kardio": "Kardio",
+      "Mobilita": "Mobilita",
+      "Učebná": "Učebna",
+      "Iné": "Jiné"
     },
     "category": {
-      "Led": "Ice",
-      "Kondice": "Condition",
-      "Ucebna": "Classroom",
-      "Jine": "Other"
+      "Led": "Led",
+      "Kondice": "Kondice",
+      "Ucebna": "Učebna",
+      "Jine": "Jiné"
     },
     "group": {
-      "Silovy": "Weight Training",
-      "Kardio": "Cardio",
-      "Mobilita": "Mobility",
-      "Led": "Ice"
+      "Silovy": "Silový trénink",
+      "Kardio": "Kardio",
+      "Mobilita": "Mobilita",
+      "Led": "Led"
     },
     "subtype": {
-      "Individuál": "Individual",
-      "Tímový": "Team",
-      "Zápas": "Match"
+      "Individuál": "Individuální",
+      "Tímový": "Týmový",
+      "Zápas": "Zápas"
     }
   },
   "units": {
     "hourShort": "h",
     "minShort": "m",
     "secShort": "s",
-    "minutes_one": "{{count}} minute",
-    "minutes_other": "{{count}} minutes"
+    "minutes_one": "{{count}} minuta",
+    "minutes_other": "{{count}} minut"
   },
   "errors": {
-    "unknown": "Something went wrong.",
-    "saveFailed": "Failed to save the workout.",
-    "dateFormat": "Use the YYYY-MM-DD format.",
-    "hcNotLinked": "The package 'react-native-health-connect' doesn't seem to be linked.",
-    "javaHome": "JAVA_HOME is not set."
+    "unknown": "Něco se pokazilo.",
+    "saveFailed": "Nepodařilo se uložit trénink.",
+    "dateFormat": "Použij formát RRRR-MM-DD.",
+    "hcNotLinked": "Balíček 'react-native-health-connect' není propojen.",
+    "javaHome": "JAVA_HOME není nastaven."
+  },
+  "common": {
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "save": "Uložit",
+    "loading": "Načítám...",
+    "yes": "Ano",
+    "no": "Ne",
+    "ok": "OK",
+    "confirm": "Potvrdit",
+    "back": "Zpět",
+    "done": "Hotovo",
+    "add": "Přidat",
+    "update": "Aktualizovat",
+    "remove": "Odstranit",
+    "close": "Zavřít",
+    "select": "Vybrat",
+    "change": "Změnit",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "info": "Info",
+    "required": "Povinné",
+    "type": "Typ"
   }
 }

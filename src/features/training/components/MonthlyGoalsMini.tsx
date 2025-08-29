@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { Card, Text, Button, Icon, ProgressBar } from 'react-native-paper';
+import { Card, Text, IconButton, Icon, ProgressBar, Button } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
@@ -58,23 +58,23 @@ export default function MonthlyGoalsMini({ style }: { style?: ViewStyle }) {
 
   const entries = (Object.entries(targets) as [GoalKey, number][])
     .filter(([, v]) => typeof v === 'number' && v > 0)
-    .slice(0, 4); // aj tak máš max 4 ciele
+    .slice(0, 5); // aj tak máš max 4 ciele
 
   return (
     <Card style={[styles.card, style]}>
       <Card.Content style={{ gap: 8 }}>
         <View style={styles.headerRow}>
-          <Text variant="titleSmall">
-            {t('goals.header', { defaultValue: 'Mesačné ciele' })}
-          </Text>
-          <Button compact onPress={() => navigation.navigate('Settings')}>
-            {t('goals.edit', { defaultValue: 'Upraviť' })}
+            <Text variant="titleMedium">
+    {t('screens.trainingsFeed.goals.header', { defaultValue: 'Mesačné ciele' })}
+  </Text>
+          <Button compact onPress={() => navigation.navigate('MonthlyGoalsEdit')}>
+            {t('screens.trainingsFeed.goals.edit', { defaultValue: 'Upraviť' })}
           </Button>
         </View>
 
         {entries.length === 0 ? (
           <Text variant="bodySmall" style={{ opacity: 0.8 }}>
-            {t('goals.none', { defaultValue: 'Žiadne aktívne ciele.' })}
+            {t('screens.trainingsFeed.goals.none', { defaultValue: 'Žiadne aktívne ciele.' })}
           </Text>
         ) : (
           entries.map(([key, target]) => {
@@ -82,7 +82,7 @@ export default function MonthlyGoalsMini({ style }: { style?: ViewStyle }) {
             const ratio = target > 0 ? Math.min(1, current / target) : 0;
 
             return (
-              <View key={key} style={{ gap: 4 }}>
+              <View key={key} style={{ gap: 5 }}>
                 <View style={styles.row}>
                   <View style={styles.rowLeft}>
                     <Icon source={goalIcon(key)} size={16} />
@@ -108,9 +108,15 @@ export default function MonthlyGoalsMini({ style }: { style?: ViewStyle }) {
 
 const styles = StyleSheet.create({
   // default na polovicu šírky; dá sa prebiť `style` propom
-  card: { width: '50%', alignSelf: 'flex-start', borderRadius: 12, elevation: 2 },
+    card: {
+    flex: 1,
+    minWidth: 0,          // ⚠️ dôležité pre správne delenie priestoru
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    elevation: 2,
+  },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  pb: { height: 6, borderRadius: 4 },
+  pb: { height: 6, borderRadius: 5 },
 });

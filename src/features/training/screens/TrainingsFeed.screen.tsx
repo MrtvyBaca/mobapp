@@ -13,9 +13,13 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import MonthlyGoalsSummary from '@/features/training/components/MonthlyGoalsSummary';
 import MonthlyGoalsMini from '@/features/training/components/MonthlyGoalsMini';
+import ReadinessMini from '@/features/readiness/components/ReadinessMini';
 import type { TrainingRecord } from '@/shared/lib/training';
 import { listPaginated } from '@/features/training/storage';
 import TrainingListItem from '@/features/training/components/TrainingListItem';
+import { Card, Title, Paragraph } from 'react-native-paper';
+import { remove as removeTraining } from '@/features/training/storage';
+
 
 const PAGE_SIZE = 4;            // koľko načítať na 1 stránku
 const MAX_TOPUP_PAGES = 2;      // koľko stránok max. dotiahnuť navyše pri prvom loade
@@ -30,7 +34,9 @@ const mergeUniqueById = (prev: TrainingRecord[], next: TrainingRecord[]) => {
   return merged;
 };
 
+
 export default function TrainingsFeedScreen() {
+  const [expandedId, setExpandedId] = React.useState<string | null>(null);
   const navigation = useNavigation<any>();
   const { t, i18n } = useTranslation();
 
@@ -129,10 +135,11 @@ export default function TrainingsFeedScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container }>
             {/* ---- RAD PRE 2 MINI-KARTY (polovičná šírka) ---- */}
-      <View style={styles.widgetsRow}>
-        <MonthlyGoalsMini />
+      <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 12 }}>
+        <MonthlyGoalsMini style={{ flex: 1, minWidth: 0 }} />
+        <ReadinessMini style={{ flex: 1, minWidth: 0 }} />
         {/* Druhú polovicu nahradíš svojím widgetom */}
         {/* <YourOtherWidget style={{ width: '50%' }} /> */}
       </View>
@@ -142,9 +149,21 @@ export default function TrainingsFeedScreen() {
         //Kazdy item ma svoje id, na rychli render vo Flatliste
         keyExtractor={(it) => it.id}
         //Komoponent na vykreslenie jedneho itemu
-        renderItem={({ item }) => <TrainingListItem item={item} />}
-        // re-render pri zmene jazyka
-        extraData={i18n.language} 
+  renderItem={({ item }) => (
+    <TrainingListItem
+      item={item}
+      expanded={expandedId === item.id}
+      onPress={() => setExpandedId(expandedId === item.id ? null : item.id)}
+      onEdit={() => navigation.navigate('RecordDetail', { id: item.id, edit: true })}
+      onRemove={async () => {
+        await removeTraining(item.id);
+        setExpandedId(null);
+        // optimisticky odstráň z listu
+        setItems((prev) => prev.filter((r) => r.id !== item.id));
+      }}
+    />
+  )}
+  extraData={expandedId}
         // pull-to-refresh - nad listou, potiahnutim zavola load(true)
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} />}
         // ulozi vysku listu

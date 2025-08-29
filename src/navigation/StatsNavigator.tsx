@@ -7,7 +7,7 @@ import type { StatsStackParamList } from './types';
 import StatsScreen from '@/features/stats/screens/Stats.screen';
 import MonthStats from '@/features/stats/screens/MonthStats.screen';
 import WeeklyStats from '@/features/stats/screens/WeeklyStats.screen';
-
+import YearStatsScreen from '@/features/stats/screens/YearStats.screen';
 const Stack = createStackNavigator<StatsStackParamList>();
 
 export default function StatsNavigator() {
@@ -35,6 +35,8 @@ export default function StatsNavigator() {
         component={WeeklyStats}
         options={{ title: 'Štatistiky týždňa' }}
       />
+      <Stack.Screen name="YearStats" component={YearStatsScreen} options={{ title: 'Ročné štatistiky' }} />
+
       {/* Settings TU už nedávaj – je globálne v RootStacku */}
     </Stack.Navigator>
   );

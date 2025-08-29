@@ -8,7 +8,6 @@ import { LanguageProvider } from '@/providers/LanguageProvider';
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from '@navigation/AppNavigator';
-import paperTheme from '@theme/paperTheme';
 import { ensureUserId } from '@shared/lib/user';
 
 import {
@@ -17,27 +16,9 @@ import {
   type Theme as NavTheme,
 } from '@react-navigation/native';
 import { adaptNavigationTheme } from 'react-native-paper';
-// React Navigation téma prispôsobená Paperu
-const { LightTheme: NavPaperTheme } = adaptNavigationTheme({
-  reactNavigationLight: NavDefault,
-});
-
-// Zosúladíme farby s Paper témou (stále je to NAV téma, nie Paper)
-const navTheme: NavTheme = {
-  ...NavDefault,
-  ...NavPaperTheme,
-  colors: {
-    ...NavPaperTheme.colors,
-    primary: paperTheme.colors.primary,
-    background: paperTheme.colors.background,
-    card: paperTheme.colors.surface,
-    text: paperTheme.colors.onSurface,
-    border: paperTheme.colors.outline,
-    notification: NavPaperTheme.colors.notification,
-  },
-  dark: false,
-};
-
+import { MD3LightTheme } from 'react-native-paper';
+import { paperTheme, navTheme } from '@/theme/paperTheme';
+import { registerTranslation, en, cs } from 'react-native-paper-dates';
 export default function App() {
   useEffect(() => {
     (async () => {
@@ -62,3 +43,6 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+registerTranslation('en', en);
+registerTranslation('cs', cs);

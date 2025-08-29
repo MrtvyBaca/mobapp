@@ -1,11 +1,14 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 import TrainingsFeedScreen from '@/features/training/screens/TrainingsFeed.screen';
 import AddTrainingScreen from '@/features/training/screens/AddTraining.screen';
 import SettingsGear from '@/navigation/components/SettingsGear';
+import ReadinessScreen from './ReadinessNavigator';
+import RecordDetailScreen from '@/features/records/screens/RecordDetail.screen';
+import { createStackNavigator } from '@react-navigation/stack';
+import type { TrainingStackParamList } from '@/navigation/types';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<TrainingStackParamList>();
 
 export default function TrainingNavigator() {
   const { t } = useTranslation();
@@ -28,6 +31,20 @@ export default function TrainingNavigator() {
           headerRight: () => null,
         }}
       />
+  <Stack.Screen
+    name="ReadinessLog"
+    component={ReadinessScreen}
+    options={{
+      title: t('readiness.title', { defaultValue: 'Denný Readiness' }),
+      // voliteľné: modálne správanie na iOS
+      // presentation: 'modal',
+    }}
+  />
+<Stack.Screen
+  name="RecordDetail"
+  component={RecordDetailScreen}
+  options={{ title: 'Edit record' }} // alebo i18n
+/>
     </Stack.Navigator>
   );
 }

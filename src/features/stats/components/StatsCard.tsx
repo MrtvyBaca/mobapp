@@ -1,7 +1,7 @@
 // screens/StatistikyScreen.tsx
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Card, Title, Paragraph, DataTable, Text, Icon } from 'react-native-paper';
+import { Card, Title, Paragraph, DataTable, Chip, Icon, Text } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import type { StatsStackParamList } from '@/navigation/types';
@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
   card: { borderRadius: 12, elevation: 3 },
   sectionTitle: { marginBottom: 8 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  moreLink: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  linkRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 });
 
 export default function StatistikyScreen() {
@@ -45,7 +46,7 @@ export default function StatistikyScreen() {
 
   const months = React.useMemo(() => {
     const s = new Set<string>();
-    for (const r of records) s.add(toMonthKey(r.date));
+    for (const r of records) s.add(toMonthKey(r.date)); // YYYY-MM
     return Array.from(s).sort().reverse();
   }, [records]);
 
@@ -55,6 +56,7 @@ export default function StatistikyScreen() {
     [records, currentYear]
   );
 
+  // Celkový súhrn podľa typu (bez priemeru)
   const byType = inYear.reduce<Record<string, { sessions: number; minutes: number }>>(
     (acc, r) => {
       const t = inferType(r);
@@ -75,17 +77,25 @@ export default function StatistikyScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.screen}>
-      {/* Celkový súhrn – aktuálny rok */}
+      {/* Celkový súhrn – aktuálny rok + preklik na YearStats */}
       <Card style={styles.card}>
         <Card.Content>
           <View style={styles.headerRow}>
-            <Title style={styles.sectionTitle}>Celkový súhrn — {currentYear}</Title>
-            <View
-              style={styles.moreLink}
-              onTouchEnd={() => navigation.navigate('YearStats', { year: currentYear })}
-            >
-              <Icon source="eye-outline" size={18} color="#007AFF" />
-              <Text style={{ color: '#007AFF' }}>More</Text>
+            <View style={styles.titleRow}>
+              <Title style={styles.sectionTitle}>Celkový súhrn — {currentYear}</Title>
+            </View>
+
+            {/* „Zobraziť rok“ – ikonka/link na YearStats */}
+            <View style={styles.linkRow}>
+              <Text variant="labelLarge" onPress={() => navigation.navigate('YearStats', { year: currentYear })}>
+                Detail roka
+              </Text>
+              <Icon
+                source="chevron-right"
+                size={20}
+                color="#9aa4b2"
+                // klikateľná oblasť – stačí aj na texte vyššie
+              />
             </View>
           </View>
 
@@ -119,7 +129,7 @@ export default function StatistikyScreen() {
         </Card.Content>
       </Card>
 
-      {/* Prehľad posledných rokov */}
+      {/* Prehľad posledných rokov (klik na YearStats) */}
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Prehľad posledných rokov</Title>
@@ -141,10 +151,11 @@ export default function StatistikyScreen() {
                   onPress={() => navigation.navigate('YearStats', { year: y })}
                 >
                   <DataTable.Cell>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Text>{y}</Text>
-                      <Icon source="eye-outline" size={16} color="#007AFF" />
-                      <Text style={{ color: '#007AFF' }}>More</Text>
+                      <View style={{ marginLeft: 6 }}>
+                        <Icon source="chevron-right" size={18} color="#9aa4b2" />
+                      </View>
                     </View>
                   </DataTable.Cell>
                   <DataTable.Cell numeric>{sessions}</DataTable.Cell>
@@ -156,7 +167,7 @@ export default function StatistikyScreen() {
         </Card.Content>
       </Card>
 
-      {/* Prehľad posledných mesiacov */}
+      {/* Prehľad posledných mesiacov (klik na MonthStats) */}
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Prehľad posledných mesiacov</Title>
@@ -178,10 +189,11 @@ export default function StatistikyScreen() {
                   onPress={() => navigation.navigate('MonthStats', { month: m })}
                 >
                   <DataTable.Cell>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Text>{m}</Text>
-                      <Icon source="eye-outline" size={16} color="#007AFF" />
-                      <Text style={{ color: '#007AFF' }}>More</Text>
+                      <View style={{ marginLeft: 6 }}>
+                        <Icon source="chevron-right" size={18} color="#9aa4b2" />
+                      </View>
                     </View>
                   </DataTable.Cell>
                   <DataTable.Cell numeric>{sessions}</DataTable.Cell>

@@ -48,8 +48,9 @@ export function goalLabel(key: GoalKey, t: (k: string, o?: any) => string): stri
 export function goalIcon(key: GoalKey): string {
   switch (key) {
     case 'Led:Individuál':
+      return 'curling'; 
     case 'Led:Tímový':
-      return 'curling';           // 🥌 MaterialCommunityIcons
+      return 'account-group';           // 🥌 MaterialCommunityIcons
     case 'Kondice:Silovy':
       return 'dumbbell';
     case 'Kondice:Kardio':

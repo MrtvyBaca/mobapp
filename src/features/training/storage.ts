@@ -411,3 +411,7 @@ export const LocalRepo: TrainingsRepo = {
 
 /** Sem neskôr doplníš REST/GraphQL/Firestore implementáciu s rovnakým rozhraním */
 export const repo: TrainingsRepo = LocalRepo;
+
+export async function getById(id: string): Promise<TrainingRecord | null> {
+  return await readRecord(id);
+}

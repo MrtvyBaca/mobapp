@@ -42,7 +42,8 @@ export default (): ExpoConfig => {
             minSdkVersion: 26,
             compileSdkVersion: 36,
             targetSdkVersion: 36,
-          },
+            "kotlinVersion": "1.9.24"
+                   },
         },
       ],
       'expo-secure-store',

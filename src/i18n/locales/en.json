@@ -1,9 +1,31 @@
 {
+  "settings" : {
+    "health": {
+      "desc" : "Integration with Health Connect (Android) or Health (iOS).",
+      "title" : "Health Integration",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "syncNow": "Sync Now"
+    }
+  },
   "screens": {
+    "settings": {
+      "title": "Settings",
+      "language_cs": "Czech",
+      "language_en": "English",
+      "language": "Language"
+    },
     "trainingsFeed": {
       "title": "Workouts",
       "subtitle": "No workouts yet",
-      "addnew": "Add your first workout"
+      "addnew": "Add your first workout",
+      "goals": {
+        "header": "Monthly Goals",
+        "edit": "Edit",
+        "none": "No active goals."
+      },
+      "readinnessTitle": "Recovery",
+      "readinnessAdd": "Add"
     },
     "addTraining": {
       "title": "Add Workout",
@@ -36,9 +58,36 @@
       "setDurationA11y": "Set duration"
     }
   },
+  "readiness": {
+    "q": {
+      "load": "Training load yesterday (0–10, 10 = extreme)",
+      "soreness": "Muscle soreness (0–10, 10 = severe)",
+      "fatigue": "Muscle fatigue (0–10, 10 = severe)",
+      "stress": "Mental stress (0–10, 10 = high)",
+      "injury": "Injury (0–10, 10 = severe)",
+      "illness": "Illness (0–10, 10 = severe)",
+      "sleep": "Sleep last night (0–10, 10 = excellent)",
+      "nutrition": "Nutrition yesterday (0–10, 10 = excellent)",
+      "mood": "Mood last 24h (0–10, 10 = excellent)",
+      "energy": "Energy today (0–10, 10 = high)",
+      "menstrual": "Menstruation (Yes/No)"
+    },
+    "title": "Daily Readiness"
+  },
+  "goals": {
+    "monthlyTarget": "Monthly Goals",
+    "limitNote": "Max. 5 active goals",
+    "activeGoals": "Active Goals",
+    "target": "Target",
+    "none": "No goals.",
+    "deleteConfirm": "Are you sure you want to delete this goal?",
+    "left": "Left"
+          },
   "tabs": {
     "trainingsFeed": "Home",
-    "addTraining": "Add Workout"
+    "addTraining": "Add Workout",
+    "monthlygoals": "Monthly Goals",
+    "settings": "Settings"
   },
   "enums": {
     "type": {
@@ -80,5 +129,30 @@
     "dateFormat": "Use the YYYY-MM-DD format.",
     "hcNotLinked": "The package 'react-native-health-connect' doesn't seem to be linked.",
     "javaHome": "JAVA_HOME is not set."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "confirm": "Confirm",
+    "back": "Back",
+    "done": "Done",
+    "add": "Add",
+    "date": "Date",
+    "update": "Update",
+    "remove": "Remove",
+    "close": "Close",
+    "select": "Select",
+    "change": "Change",
+    "error": "Error",
+    "success": "Success",
+    "info": "Info",
+    "required": "Required",
+    "type" : "Type"
   }
 }

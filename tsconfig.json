@@ -20,7 +20,8 @@
       "@store/*": ["src/store/*"],
       "@theme/*": ["src/theme/*"]
     },
-    "types": ["react", "react-native"],
+    "types": ["node","react", "react-native"],
     "resolveJsonModule": true
-  }
+  },
+  "include": ["app.config.ts", "src", "App.tsx", "index.ts", "index.tsx"]
 }

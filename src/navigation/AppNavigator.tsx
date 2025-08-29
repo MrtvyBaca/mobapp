@@ -13,8 +13,10 @@ import ReadinessScreen from '@/features/readiness/screens/Readiness.screen';
 import DebugDataScreen from '@/features/dev/screens/DebugData.screen';
 import Settings from '@/features/settings/screens/Setting.screen';
 import { features } from '@/shared/config/featureFlags';
+import ReadinessNavigator from './ReadinessNavigator';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MonthlyGoalsEdit from '@/features/goals/screens/MonthlyGoalsEdit.screen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -64,7 +66,7 @@ function MainTabs() {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route,}) => ({
         tabBarLabel: labelFor(route.name),
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons name={iconFor(route.name) as any} color={color} size={size} />
@@ -78,7 +80,7 @@ function MainTabs() {
       {features.records && <Tab.Screen name="RecordsTab" component={RecordsNavigator} />}
       {features.stats && <Tab.Screen name="StatsTab" component={StatsNavigator} />}
       {features.ice && <Tab.Screen name="IceTab" component={IceScreen} />}
-      {features.readiness && <Tab.Screen name="ReadinessTab" component={ReadinessScreen} />}
+      {features.readiness && <Tab.Screen name="ReadinessTab" component={ReadinessNavigator} />}
       {features.debugData && <Tab.Screen name="DebugDataScreen" component={DebugDataScreen} />}
     </Tab.Navigator>
   );
@@ -96,6 +98,11 @@ export default function AppNavigator() {
         component={Settings}
         options={{ title: t('tabs.settings') }}
       />
+      <RootStack.Screen
+      name="MonthlyGoalsEdit"
+      component={MonthlyGoalsEdit}
+      options={{ title: t('tabs.monthlygoals') }}
+    />
     </RootStack.Navigator>
   );
 }
