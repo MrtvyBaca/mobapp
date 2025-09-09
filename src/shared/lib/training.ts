@@ -105,7 +105,7 @@ export const MOBILITA_SUBTYPES = [
 
 // ---- (voliteľné) ikonky do UI ----
 export const TYPE_ICON: Record<TrainingType, string> = {
-  Led: '🏒',
+  Led: '🥌',
   Silový: '🏋️',
   Beh: '🏃',
   Bicykel: '🚴',
@@ -121,7 +121,7 @@ export const TYPE_ICON: Record<TrainingType, string> = {
   Bežky: '⛷️',
   Mobilita: '🧘',
   Učebná: '📚',
-  Kardio: '❤️‍🔥',
+  Kardio: '🏃',
   Iné: '✨',
 };
 

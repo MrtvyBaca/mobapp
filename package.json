@@ -10,6 +10,7 @@
     "fmt": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "dependencies": {
+    "@miblanchard/react-native-slider": "^2.6.0",
     "@quidone/react-native-wheel-picker": "^1.5.2",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "8.4.1",
@@ -20,6 +21,7 @@
     "@react-navigation/stack": "^7.4.7",
     "@shopify/react-native-skia": ">=1.2.3",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.18",
     "expo": "~53.0.20",
     "expo-build-properties": "~0.14.8",
     "expo-dev-client": "~5.2.4",
@@ -44,6 +46,7 @@
     "react-native-safe-area-context": "^5.6.0",
     "react-native-screens": "^4.13.1",
     "react-native-svg": "^15.12.1",
+    "react-native-ui-datepicker": "^3.1.2",
     "react-native-worklets": "^0.4.2",
     "react-navigation": "^5.0.0",
     "uuid": "^11.1.0",

@@ -7,7 +7,7 @@ import ReadinessScreen from './ReadinessNavigator';
 import RecordDetailScreen from '@/features/records/screens/RecordDetail.screen';
 import { createStackNavigator } from '@react-navigation/stack';
 import type { TrainingStackParamList } from '@/navigation/types';
-
+import MonthlyGoalsEditScreen from '@/features/goals/screens/MonthlyGoalsEdit.screen';
 const Stack = createStackNavigator<TrainingStackParamList>();
 
 export default function TrainingNavigator() {
@@ -23,23 +23,39 @@ export default function TrainingNavigator() {
           headerRightContainerStyle: { paddingRight: 4 },
         }}
       />
+            <Stack.Screen
+        name="MonthlyGoalsEdit"
+        component={MonthlyGoalsEditScreen}
+        options={{
+          // ak máš i18n kľúč, použi ho – napr. goals.monthlyTarget
+          title: t('goals.monthlyTarget'),
+          headerRight: () => <SettingsGear />,
+          headerRightContainerStyle: { paddingRight: 4 },
+          // (voliteľné) iOS modal look:
+          // presentation: 'modal',
+        }}
+      />
       <Stack.Screen
         name="AddTraining"
         component={AddTrainingScreen}
         options={{
           title: t('screens.addTraining.title'),
-          headerRight: () => null,
+          headerRight: () => <SettingsGear />,
+          headerRightContainerStyle: { paddingRight: 4 },
         }}
       />
-  <Stack.Screen
-    name="ReadinessLog"
-    component={ReadinessScreen}
-    options={{
-      title: t('readiness.title', { defaultValue: 'Denný Readiness' }),
-      // voliteľné: modálne správanie na iOS
-      // presentation: 'modal',
-    }}
-  />
+<Stack.Screen
+  name="ReadinessLog"
+  component={ReadinessScreen}   // ⬅️ vnútorný navigator
+        options={{
+          // ak máš i18n kľúč, použi ho – napr. goals.monthlyTarget
+          title: t('recovery.title'),
+          headerRight: () => <SettingsGear />,
+          headerRightContainerStyle: { paddingRight: 4 },
+          // (voliteľné) iOS modal look:
+          // presentation: 'modal',
+        }}
+/>
 <Stack.Screen
   name="RecordDetail"
   component={RecordDetailScreen}

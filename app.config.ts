@@ -5,9 +5,10 @@ export default (): ExpoConfig => {
   const isLight = process.env.LIGHT === '1';
 
   return {
-    name: isLight ? 'MobApp Light' : 'MobApp',
-    slug: 'mobapp',
-    version: '1.0.0',
+    owner: 'mrtvybaca',
+    name: isLight ? 'Rego' : 'Rego',
+    slug: 'rego',
+    version: '1.0.1',
     orientation: 'portrait',
 
     icon: './assets/icon.png',
@@ -18,7 +19,7 @@ export default (): ExpoConfig => {
     },
 
     ios: {
-      bundleIdentifier: 'com.mrtvybaca.mojaappka',
+      bundleIdentifier: 'com.mrtvybaca.rego',
       infoPlist: {
         NSHealthShareUsageDescription:
           'Aplikácia číta tréningy z Apple Health, aby si mal štatistiky.',
@@ -28,7 +29,7 @@ export default (): ExpoConfig => {
     },
 
     android: {
-      package: 'com.mrtvybaca.mojaappka',
+      package: 'com.mrtvybaca.rego',
     },
 
     plugins: [
@@ -51,16 +52,16 @@ export default (): ExpoConfig => {
 
     extra: {
       eas: {
-        projectId: 'f83a7922-25e9-4c7a-a784-3a1c36d117da',
+"projectId": "47b2a8df-19f9-4379-bf77-501f8f506c2e"
       },
       // ▼ voliteľné feature flagy pre „light“ verziu (čítaj v appke cez Constants.expoConfig?.extra)
       features: {
         training: true,
-        records: true,
-        ice: true,
-        stats: !isLight,
+        records: !isLight,
+        ice: !isLight,
+        stats: true,
         readiness: !isLight,
-        debugData: !isLight,
+        debugData: true,
       },
     },
   };

@@ -10,9 +10,10 @@ import { add } from '@/features/training/storage';
 import { useNavigation } from '@react-navigation/native';
 import { WheelPicker } from 'react-native-infinite-wheel-picker';
 // hore v súbore
-import { ScrollView, View, StyleSheet, Platform, Pressable } from 'react-native';
+import { ScrollView, View, StyleSheet, Platform, Pressable, ToastAndroid } from 'react-native';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { formatDate, toDateKey } from '@/shared/lib/datetime';
+import MaterialCalendarModal from '@/shared/components/MaterialCalendarModal';
 type LEDSubtype = (typeof LED_SUBTYPES)[number];
 type Category = 'Led' | 'Kondice' | 'Ucebna' | 'Jine';
 type Group = 'Led' | 'Silovy' | 'Kardio' | 'Mobilita';
@@ -83,41 +84,48 @@ export default function AddTrainingScreen() {
     return null;
   };
 
-  const save = async () => {
-    const err = validate();
-    if (err) { alert(err); return; }
-    setSaving(true);
-    try {
-      let normType: TrainingDraft['type'];
-      if (category === 'Led') normType = 'Led';
-      else if (category === 'Kondice') normType = deriveNormalizedType(group);
-      else if (category === 'Ucebna') normType = 'Učebná';
-      else normType = 'Iné';
+  
+const save = async () => {
+  const err = validate();
+  if (err) { alert(err); return; }
+  setSaving(true);
+  try {
+    let normType: TrainingDraft['type'];
+    if (category === 'Led') normType = 'Led';
+    else if (category === 'Kondice') normType = deriveNormalizedType(group);
+    else if (category === 'Ucebna') normType = 'Učebná';
+    else normType = 'Iné';
 
-      const totalSec = hours * 3600 + minutes * 60 + seconds;
-      const durationMinutes = Math.round(totalSec / 60);
+    const totalSec = hours * 3600 + minutes * 60 + seconds;
+    const durationMinutes = Math.round(totalSec / 60);
 
-      const draft: TrainingDraft = {
-        date,
-        duration: (['Led', 'Kondice', 'Jine'].includes(category)) ? durationMinutes : 0,
-        description,
-        category,
-        group: category === 'Kondice' ? group : category === 'Led' ? 'Led' : undefined,
-        subtype: category === 'Led' ? subtype : undefined,
-        type: normType,
-        schemaVersion: 1 as const,
-      };
+    const draft: TrainingDraft = {
+      date,
+      duration: (['Led', 'Kondice', 'Jine'].includes(category)) ? durationMinutes : 0,
+      description,
+      category,
+      group: category === 'Kondice' ? group : category === 'Led' ? 'Led' : undefined,
+      subtype: category === 'Led' ? subtype : undefined,
+      type: normType,
+      schemaVersion: 1 as const,
+    };
 
-      await add(draft);
-      resetForm();
-      navigation.goBack();
-    } catch (e) {
-      console.error(e);
-      alert('Nepodarilo sa uložiť tréning.');
-    } finally {
-      setSaving(false);
+    await add(draft);
+
+    // 👇 krátke potvrdenie na Androide
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(t('common.saved'), ToastAndroid.SHORT);
     }
-  };
+
+    resetForm();
+    navigation.goBack(); // návrat na feed
+  } catch (e) {
+    console.error(e);
+    alert('Nepodarilo sa uložiť tréning.');
+  } finally {
+    setSaving(false);
+  }
+};
 
   const onChangeDate = (_e: DateTimePickerEvent, selected?: Date) => {
     if (Platform.OS === 'android') setShowPicker(false);
@@ -133,7 +141,13 @@ const confirmTimeModal = () => {
   setShowTimePicker(false);
 };
 const parsed = date ? new Date(date) : null;
+const shiftDate = (dKey: string, days: number) => {
+  const d = new Date(dKey);
+  d.setDate(d.getDate() + days);
+  return toDateKey(d);
+};
   return (
+    
     <>
       <ScrollView contentContainerStyle={styles.screen} nestedScrollEnabled keyboardShouldPersistTaps="handled">
         <Card style={styles.card}>
@@ -148,18 +162,13 @@ const parsed = date ? new Date(date) : null;
   right={<TextInput.Icon icon="calendar" onPress={() => setDpOpen(true)} />}
   style={styles.input}
 />
-<DatePickerModal
-  locale={
-    i18n.language.startsWith('cs') ? 'cs'
-    : i18n.language.startsWith('sk') ? 'sk'
-    : 'en' // fallback s dd/mm/yyyy
-  }
-  mode="single"
+<MaterialCalendarModal
   visible={dpOpen}
   date={parsed ?? new Date()}
+  locale={i18n?.language?.startsWith('cs') ? 'cs' : i18n?.language?.startsWith('sk') ? 'sk' : 'en'}
   onDismiss={() => setDpOpen(false)}
-  onConfirm={({ date: picked }) => {
-    if (picked) setDate(toDateKey(picked));  // 👈 uložíš v ISO "YYYY-MM-DD"
+  onConfirm={(picked: Date) => {
+    setDate(toDateKey(picked));
     setDpOpen(false);
   }}
 />

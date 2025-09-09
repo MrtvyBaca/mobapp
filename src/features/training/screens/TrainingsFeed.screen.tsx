@@ -25,7 +25,9 @@ const PAGE_SIZE = 4;            // koľko načítať na 1 stránku
 const MAX_TOPUP_PAGES = 2;      // koľko stránok max. dotiahnuť navyše pri prvom loade
 // Konštanta pre FAB (typicky 56px + okraj)
 const FAB_SPACE = 72;
-const BOTTOM_PADDING = FAB_SPACE + 8; // extra padding dole, aby obsah nebol schovaný pod FAB
+const FAB_GAP = 12;                   // medzera medzi FABmi
+const BOTTOM_PADDING = FAB_SPACE * 2 + FAB_GAP; // ⬅️ bolo FAB_SPACE + 8
+
 // deduplikácia podľa id (pre istotu)
 const mergeUniqueById = (prev: TrainingRecord[], next: TrainingRecord[]) => {
   const seen = new Set(prev.map(i => i.id));
@@ -209,12 +211,25 @@ export default function TrainingsFeedScreen() {
         keyboardShouldPersistTaps="handled"
       />
       
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        color="#fff"
-        onPress={() => navigation.navigate('AddTraining')}
-      />
+<View pointerEvents="box-none" style={styles.fabColumn}>
+  {/* Readiness (srdiečko, červené) */}
+  <FAB
+    icon="heart"
+    color="#fff"
+    accessibilityLabel={t('screens.trainingsFeed.readinnessAdd', { defaultValue: 'Add readiness' })}
+    style={[styles.fabBase, { backgroundColor: '#ef4444', marginBottom: 12 }]}
+    onPress={() => navigation.navigate('ReadinessLog')}
+  />
+
+  {/* Add Training (plus, zelené) */}
+  <FAB
+    icon="plus"
+    color="#fff"
+    accessibilityLabel={t('screens.trainingsFeed.addnew')}
+    style={[styles.fabBase, { backgroundColor: 'green' }]}
+    onPress={() => navigation.navigate('AddTraining')}
+  />
+</View>
     </View>
   );
 }
@@ -232,4 +247,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f3f6fa' },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 6 },
   fab: { position: 'absolute', right: 16, bottom: 24, backgroundColor: 'green' },
+    fabBase: {
+    // žiadne position:absolute → nech sa skladajú pod seba
+    // prípadné tiene/okrúhlenia si berie FAB z paperu
+  },
+    fabColumn: {
+    position: 'absolute',
+    right: 16,
+    bottom: 24,
+    alignItems: 'flex-end',
+  },
 });

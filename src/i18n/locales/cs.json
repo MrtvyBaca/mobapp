@@ -1,11 +1,11 @@
 {
-    "settings" : {
+  "settings": {
     "health": {
-      "desc" : "Integrace s Health Connect (Android) nebo Health (iOS).",
-      "title" : "Integrace se Health Connect",
+      "desc": "Integrace s Health Connect (Android) nebo Zdraví (iOS).",
+      "title": "Integrace zdraví",
       "connect": "Připojit",
       "disconnect": "Odpojit",
-      "syncNow": "Synchronizovat nyní"
+      "syncNow": "Synchronizovat"
     }
   },
   "screens": {
@@ -29,15 +29,15 @@
     },
     "addTraining": {
       "title": "Přidat trénink",
-      "subtitle": "Přidat nový trénink",
+      "subtitle": "Přidej nový trénink",
       "date": "Datum",
       "time": "Čas",
       "type": "Typ aktivity",
       "category": "Kategorie",
       "duration": "Délka",
-      "info": "Další informace",
-      "studyinfo": "Co ses naučil?",
-      "otherinfo": "Jiné informace (povinné)",
+      "info": "Doplňující informace",
+      "studyinfo": "Co ses naučil/a?",
+      "otherinfo": "Jiná informace (povinné)",
       "ice": "Led",
       "condition": "Kondice",
       "classroom": "Učebna",
@@ -53,50 +53,66 @@
       "clear": "Vymazat",
       "save": "Uložit",
       "traininglenerror": "Délka tréninku musí být alespoň 1 minuta.",
-      "otherinfoerror": "Jiné informace jsou povinné.",
+      "otherinfoerror": "Je vyžadována jiná informace.",
       "setDurationTitle": "Nastavit délku",
       "setDurationA11y": "Nastavit délku"
     }
   },
-  "readiness": {
+  "recovery": {
     "q": {
-      "load": "Zátěž včera (0–10, 10 = extrémní)",
-      "soreness": "Svalovka (0–10, 10 = velká)",
-      "fatigue": "Únava svalů (0–10, 10 = velká)",
-      "stress": "Stres (0–10, 10 = vysoký)",
-      "injury": "Zranění (0–10, 10 = výrazné)",
-      "illness": "Nemoc (0–10, 10 = výrazná)",
-      "sleep": "Spánek minulou noc (0–10, 10 = skvělý)",
-      "nutrition": "Strava včera (0–10, 10 = skvělá)",
-      "mood": "Nálada za 24h (0–10, 10 = skvělá)",
+      "load": "Včerejší zátěž (0–10, 10 = extrémní)",
+      "soreness": "Svalová bolest (0–10, 10 = silná)",
+      "fatigue": "Svalová únava (0–10, 10 = silná)",
+      "stress": "Psychický stres (0–10, 10 = vysoký)",
+      "injury": "Zranění (0–10, 10 = vážné)",
+      "illness": "Onemocnění (0–10, 10 = vážné)",
+      "sleep": "Spánek poslední noc (0–10, 10 = výborný)",
+      "nutrition": "Strava včera (0–10, 10 = výborná)",
+      "mood": "Nálada za posledních 24 h (0–10, 10 = výborná)",
       "energy": "Energie dnes (0–10, 10 = vysoká)",
       "menstrual": "Menstruace (Ano/Ne)"
     },
-    "title": "Denní Readiness"
+    "score": "Celkové skóre",
+    "title": "Denní regenerace"
   },
   "goals": {
-    "monthlyTarget": "Měsíční cíl",
+    "monthlyTarget": "Měsíční cíle",
     "limitNote": "Max. 5 aktivních cílů",
     "activeGoals": "Aktivní cíle",
     "target": "Cíl",
     "none": "Žádné cíle.",
-    "deleteConfirm": "Opravdu chceš smazat tento cíl?",
+    "deleteConfirm": "Opravdu chceš tento cíl smazat?",
     "left": "Zbývá"
   },
   "tabs": {
     "trainingsFeed": "Domů",
     "addTraining": "Přidat trénink",
     "monthlygoals": "Měsíční cíle",
-    "settings": "Nastavení"
+    "settings": "Nastavení",
+    "stats": "Statistiky",
+    "debug" : "Dev"
   },
   "enums": {
     "type": {
       "Led": "Led",
-      "Silový": "Silový trénink",
+      "Silový": "Silový",
       "Kardio": "Kardio",
       "Mobilita": "Mobilita",
       "Učebná": "Učebna",
-      "Iné": "Jiné"
+      "Iné": "Jiné",
+
+      "Beh": "Běh",
+      "Bicykel": "Kolo",
+      "Chôdza": "Chůze",
+      "Plávanie": "Plavání",
+      "Veslo": "Veslování",
+      "Eliptický": "Eliptický trenažér",
+      "Švihadlo": "Švihadlo",
+      "AirBike": "AirBike",
+      "SkiErg": "SkiErg",
+      "Turistika": "Turistika",
+      "Korčule": "Inline brusle",
+      "Bežky": "Běžecké lyže"
     },
     "category": {
       "Led": "Led",
@@ -127,15 +143,17 @@
     "unknown": "Něco se pokazilo.",
     "saveFailed": "Nepodařilo se uložit trénink.",
     "dateFormat": "Použij formát RRRR-MM-DD.",
-    "hcNotLinked": "Balíček 'react-native-health-connect' není propojen.",
-    "javaHome": "JAVA_HOME není nastaven."
+    "hcNotLinked": "Balíček 'react-native-health-connect' zřejmě není propojen.",
+    "javaHome": "JAVA_HOME není nastaveno."
   },
   "common": {
+    "detail": "Detail",
     "cancel": "Zrušit",
     "delete": "Smazat",
     "edit": "Upravit",
     "save": "Uložit",
-    "loading": "Načítám...",
+    "saved": "Uloženo ✅",
+    "loading": "Načítám…",
     "yes": "Ano",
     "no": "Ne",
     "ok": "OK",
@@ -143,8 +161,9 @@
     "back": "Zpět",
     "done": "Hotovo",
     "add": "Přidat",
+    "date": "Datum",
     "update": "Aktualizovat",
-    "remove": "Odstranit",
+    "remove": "Odebrat",
     "close": "Zavřít",
     "select": "Vybrat",
     "change": "Změnit",
@@ -153,5 +172,74 @@
     "info": "Info",
     "required": "Povinné",
     "type": "Typ"
+  },
+  "stats": {
+    "home": {
+      "yearSummaryTitle": "Souhrn — {{year}}",
+      "noDataYear": "Žádná data v {{year}}.",
+      "noDataByType": "Žádná data podle typu.",
+      "yearsOverview": "Poslední roky",
+      "monthsOverview": "Poslední měsíce"
+    },
+    "header": {
+      "titleMonth": "Statistiky pro {{month}}"
+    },
+    "axis": {
+      "x": "Den",
+      "leftReady": "Regenerace",
+      "leftCount": "Počet tréninků",
+      "leftTrend": "Trend tréninku (SMA-7)",
+      "leftRatio": "Trend tréninku"
+    },
+    "legend": {
+      "bars": "Tréninky / den",
+      "trend": "Tréninky – SMA-7",
+      "ready": "Regenerace – SMA-3"
+    },
+    "bucket": {
+      "Cardio": "Kardio",
+      "Weight": "Silový",
+      "Mobility": "Mobilita",
+      "Ice": "Led"
+    },
+    "chart": {
+      "titleBucket": "{{bucket}} (EMA)",
+      "titleAll": "Všechny tréninky (EMA)"
+    },
+    "summary": {
+      "noDataMonth": "Žádná data pro tento měsíc.",
+      "trainings": "Tréninky",
+      "minutesTotal": "Celkem minut",
+      "avgPerTraining": "Průměr na trénink"
+    },
+    "table": {
+      "byType": "Podle typu",
+      "type": "Typ",
+      "sessions": "Tréninky",
+      "minutes": "Minuty",
+      "average": "Průměr",
+      "year": "Rok",
+      "month": "Měsíc"
+    },
+    "nav": {
+      "stats": "Statistiky",
+      "month": "Měsíční statistiky",
+      "week": "Týdenní statistiky",
+      "year": "Roční statistiky"
+    },
+    "year": {
+      "summaryTitle": "Roční souhrn — {{year}}",
+      "noDataYear": "Žádná data v {{year}}.",
+      "trendTitle": "Trend tréninku ({{window}}-denní klouzavý průměr)",
+      "trendCaption": "Křivka ukazuje vyhlazený trend (čím větší okno, tím hladší křivka).",
+      "monthsTitle": "Měsíce v {{year}}",
+      "charts": {
+        "cardioVsReady": "Kardio",
+        "weightVsReady": "Silový",
+        "mobilityVsReady": "Mobilita",
+        "iceVsReady": "Led",
+        "allVsReady": "Tréninky"
+      }
+    }
   }
 }

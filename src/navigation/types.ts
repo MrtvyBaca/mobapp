@@ -37,4 +37,5 @@ export type TrainingStackParamList = {
   AddTraining: undefined;
   RecordDetail: { id: string; edit?: boolean };
   ReadinessLog: undefined; // ← nové
+  MonthlyGoalsEdit: undefined;
 };

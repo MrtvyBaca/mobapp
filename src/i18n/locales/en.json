@@ -1,8 +1,8 @@
 {
-  "settings" : {
+  "settings": {
     "health": {
-      "desc" : "Integration with Health Connect (Android) or Health (iOS).",
-      "title" : "Health Integration",
+      "desc": "Integration with Health Connect (Android) or Health (iOS).",
+      "title": "Health Integration",
       "connect": "Connect",
       "disconnect": "Disconnect",
       "syncNow": "Sync Now"
@@ -58,7 +58,7 @@
       "setDurationA11y": "Set duration"
     }
   },
-  "readiness": {
+  "recovery": {
     "q": {
       "load": "Training load yesterday (0–10, 10 = extreme)",
       "soreness": "Muscle soreness (0–10, 10 = severe)",
@@ -72,7 +72,8 @@
       "energy": "Energy today (0–10, 10 = high)",
       "menstrual": "Menstruation (Yes/No)"
     },
-    "title": "Daily Readiness"
+    "score": "Total score",
+    "title": "Daily Recovery"
   },
   "goals": {
     "monthlyTarget": "Monthly Goals",
@@ -82,22 +83,37 @@
     "none": "No goals.",
     "deleteConfirm": "Are you sure you want to delete this goal?",
     "left": "Left"
-          },
+  },
   "tabs": {
     "trainingsFeed": "Home",
     "addTraining": "Add Workout",
     "monthlygoals": "Monthly Goals",
-    "settings": "Settings"
+    "settings": "Settings",
+    "stats" : "Statistics",
+    "debug" : "Dev"
   },
   "enums": {
-    "type": {
-      "Led": "Ice",
-      "Silový": "Weight Training",
-      "Kardio": "Cardio",
-      "Mobilita": "Mobility",
-      "Učebná": "Classroom",
-      "Iné": "Other"
-    },
+  "type": {
+    "Led": "Ice",
+    "Silový": "Weight",
+    "Kardio": "Cardio",
+    "Mobilita": "Mobility",
+    "Učebná": "Classroom",
+    "Iné": "Other",
+
+    "Beh": "Running",
+    "Bicykel": "Cycling",
+    "Chôdza": "Walking",
+    "Plávanie": "Swimming",
+    "Veslo": "Rowing",
+    "Eliptický": "Elliptical",
+    "Švihadlo": "Jump rope",
+    "AirBike": "AirBike",
+    "SkiErg": "SkiErg",
+    "Turistika": "Hiking",
+    "Korčule": "Inline skating",
+    "Bežky": "Cross-country skiing"
+  },
     "category": {
       "Led": "Ice",
       "Kondice": "Condition",
@@ -131,10 +147,12 @@
     "javaHome": "JAVA_HOME is not set."
   },
   "common": {
+    "detail": "Detail",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
     "save": "Save",
+    "saved": "Saved ✅",
     "loading": "Loading...",
     "yes": "Yes",
     "no": "No",
@@ -153,6 +171,75 @@
     "success": "Success",
     "info": "Info",
     "required": "Required",
-    "type" : "Type"
+    "type": "Type"
+  },
+  "stats": {
+        "home": {
+      "yearSummaryTitle": "Summary — {{year}}",
+      "noDataYear": "No data in {{year}}.",
+      "noDataByType": "No data by type.",
+      "yearsOverview": "Recent years",
+      "monthsOverview": "Recent months"
+    },
+    "header": {
+      "titleMonth": "Statistics for {{month}}"
+    },
+    "axis": {
+      "x": "Day",
+      "leftReady": "Recovery",
+      "leftCount": "Workout count",
+      "leftTrend": "Training trend (SMA-7)",
+      "leftRatio": "Training trend"
+    },
+    "legend": {
+      "bars": "Workouts / day",
+      "trend": "Workouts – SMA-7",
+      "ready": "Recovery – SMA-3"
+    },
+    "bucket": {
+      "Cardio": "Cardio",
+      "Weight": "Weight",
+      "Mobility": "Mobility",
+      "Ice": "Ice"
+    },
+    "chart": {
+      "titleBucket": "{{bucket}} (EMA)",
+      "titleAll": "All workouts (EMA)"
+    },
+    "summary": {
+      "noDataMonth": "No data for this month.",
+      "trainings": "Workouts",
+      "minutesTotal": "Total minutes",
+      "avgPerTraining": "Average per workout"
+    },
+    "table": {
+      "byType": "By training type",
+      "type": "Type",
+      "sessions": "Workouts",
+      "minutes": "Minutes",
+      "average": "Average",
+            "year": "Year",
+      "month": "Month"
+    },
+      "nav": {
+    "stats": "Statistics",
+    "month": "Monthly statistics",
+    "week": "Weekly statistics",
+    "year": "Yearly statistics"
+  },
+  "year": {
+    "summaryTitle": "Year summary — {{year}}",
+    "noDataYear": "No data in {{year}}.",
+    "trendTitle": "Training trend ({{window}}-day moving average)",
+    "trendCaption": "The line shows a smoothed trend (the larger the window, the smoother the line).",
+    "monthsTitle": "Months in {{year}}",
+    "charts": {
+      "cardioVsReady": "Cardio",
+      "weightVsReady": "Weight",
+      "mobilityVsReady": "Mobility",
+      "iceVsReady": "Ice",
+      "allVsReady": "Workouts"
+    }
+  }
   }
 }
