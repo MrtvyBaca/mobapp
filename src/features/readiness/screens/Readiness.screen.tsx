@@ -1,41 +1,44 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, PanResponder } from 'react-native';
-import { Card, Paragraph, Text, Button, TextInput } from 'react-native-paper';
+import { ScrollView, View, StyleSheet, Platform, ToastAndroid } from 'react-native';
+import { Card, Paragraph, Text, Button, TextInput, SegmentedButtons } from 'react-native-paper';
 import {
   defaultAnswers,
   computeReadinessScore,
   type ReadinessAnswers,
 } from '@/shared/lib/readiness';
 import { getByDate, upsertForDate } from '@/features/readiness/storage';
-import { SegmentedButtons } from 'react-native-paper';
 import { useTranslation } from 'react-i18next';
 import { formatDate, toDateKey } from '@/shared/lib/datetime';
-import MaterialCalendarModal from '@/shared/components/MaterialCalendarModal';
+import MaterialCalendarModal, { toNoon } from '@/shared/components/MaterialCalendarModal';
 import { Slider } from '@miblanchard/react-native-slider';
-import { PanGestureHandler } from 'react-native-gesture-handler';
-import { fromYmdLocal } from '@/shared/components/MaterialCalendarModal';
-import { toNoon } from '@/shared/components/MaterialCalendarModal';
-import { Platform, ToastAndroid } from 'react-native';
+import {
+  PanGestureHandler,
+  PanGestureHandlerGestureEvent,
+  PanGestureHandlerStateChangeEvent,
+  State,
+} from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-// ── štýly: zmenšíme z 8 -> 6
+
+/* ------------------------------- ŠTÝLY ------------------------------- */
+
 const styles = StyleSheet.create({
   screen: { padding: 16, gap: 12, backgroundColor: '#f3f6fa' },
   card: { borderRadius: 12, elevation: 3 },
-  row: { marginVertical: 0 }, // ⬅️ bolo 8
+  row: { marginVertical: 0 },
   labelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   label: { flexShrink: 1, flexGrow: 1, paddingRight: 8 },
   valueBox: { width: 32, alignItems: 'flex-end' },
 });
 
-/* -------------------- STABILNÝ PODKOMPONENT MIMO PARENTU -------------------- */
+/* ------------------------ RIADOK S GESTOM POSUVU ------------------------ */
 
 type RowProps = {
   label: string;
   value: number;
   commitKey: keyof ReadinessAnswers;
-  onCommit: (k: keyof ReadinessAnswers, v: number) => void; // stabilný callback z parentu
-  onStartSlide: () => void; // stabilný callback z parentu
-  onEndSlide: () => void;   // stabilný callback z parentu
+  onCommit: (k: keyof ReadinessAnswers, v: number) => void;
+  onStartSlide: () => void;
+  onEndSlide: () => void;
 };
 
 const ReadinessRow = React.memo(function ReadinessRow({
@@ -49,7 +52,33 @@ const ReadinessRow = React.memo(function ReadinessRow({
   const [v, setV] = React.useState<number>(value);
   React.useEffect(() => { setV(value); }, [value]);
 
+  const [trackW, setTrackW] = React.useState(1);
+
   const clampRound = (x: number) => Math.max(0, Math.min(10, Math.round(x)));
+  const xToVal = React.useCallback((x: number) => {
+    const nx = Math.max(0, Math.min(x, trackW));
+    return clampRound((nx / trackW) * 10);
+  }, [trackW]);
+
+  const onPan = React.useCallback((e: PanGestureHandlerGestureEvent) => {
+    const next = xToVal(e.nativeEvent.x);
+    setV(next);
+  }, [xToVal]);
+
+  const onPanEnd = React.useCallback((e: PanGestureHandlerStateChangeEvent) => {
+    // Pre istotu zachytíme len koniec gesta
+    if (e.nativeEvent.state === State.END || e.nativeEvent.oldState === State.ACTIVE) {
+      const next = xToVal(e.nativeEvent.x);
+      const vv = clampRound(next);
+      setV(vv);
+      requestAnimationFrame(() => {
+        onCommit(commitKey, vv);
+        onEndSlide();
+      });
+    } else {
+      onEndSlide();
+    }
+  }, [xToVal, onCommit, commitKey, onEndSlide]);
 
   return (
     <View style={styles.row}>
@@ -60,31 +89,37 @@ const ReadinessRow = React.memo(function ReadinessRow({
         </View>
       </View>
 
+      {/* Celá táto oblasť je "ťahateľná" horizontálne */}
       <PanGestureHandler
-        activeOffsetX={[-8, 8]}
-        failOffsetY={[-6, 6]}
+        activeOffsetX={[-5, 5]}
+        failOffsetY={[-8, 8]}
+        hitSlop={{ top: 8, bottom: 8 }}
+        onBegan={onStartSlide}
         onActivated={onStartSlide}
-        onEnded={onEndSlide}
-        onCancelled={onEndSlide}
-        onFailed={onEndSlide}
+        onGestureEvent={onPan}
+        onHandlerStateChange={onPanEnd}
       >
-        {/* padding z 10 -> 6 */}
-        <View style={{ paddingVertical: 6 }}>
+        <View
+          style={{ paddingVertical: 6 }}
+          onLayout={(ev) => setTrackW(ev.nativeEvent.layout.width)}
+        >
           <Slider
             value={v}
             onValueChange={([nv]) => setV(nv)}
             minimumValue={0}
             maximumValue={10}
             step={1}
-            // menšie interakčné a vizuálne prvky
-            thumbTouchSize={{ width: 16, height: 16 }}     // ⬅️ bolo 44
+            // vizuálne menší palec, ale veľký hitbox pre komfortné chytanie
+            thumbStyle={{ width: 18, height: 18, borderRadius: 9 }}
+            thumbTouchSize={{ width: 56, height: 56 }}
+            trackStyle={{ height: 4 }}
             containerStyle={{ paddingVertical: 0 }}
-            trackStyle={{ height: 4 }}                     // ⬅️ nižší track
-            thumbStyle={{ width: 18, height: 18, borderRadius: 9 }} // ⬅️ menší thumb
-            {...({ trackClickable: false } as any)}
             minimumTrackTintColor="#2563eb"
             maximumTrackTintColor="rgba(0,0,0,0.15)"
             thumbTintColor="#2563eb"
+            // kliky na track rieši PanGestureHandler, nie slider
+            {...({ trackClickable: false } as any)}
+            onSlidingStart={onStartSlide}
             onSlidingComplete={([nv]) => {
               const vv = clampRound(nv);
               setV(vv);
@@ -98,11 +133,11 @@ const ReadinessRow = React.memo(function ReadinessRow({
       </PanGestureHandler>
     </View>
   );
-}, (prev, next) => (
+}, (prev, next) =>
   prev.label === next.label &&
   prev.value === next.value &&
   prev.commitKey === next.commitKey
-));
+);
 
 /* ------------------------------ PARENT KOMPONENT ------------------------------ */
 
@@ -130,6 +165,7 @@ export default function ReadinessScreen() {
   const [saving, setSaving] = React.useState(false);
   const [dpOpen, setDpOpen] = React.useState(false);
   const [scrollEnabled, setScrollEnabled] = React.useState(true);
+  const [skipAutoLoad, setSkipAutoLoad] = React.useState(false);
 
   const score = computeReadinessScore(answers);
 
@@ -155,28 +191,28 @@ export default function ReadinessScreen() {
     setSaving(true);
     try {
       await upsertForDate(date, answers);
-
-      // ⬇️ zobraz „Saved“ nenarušene a choď späť
       if (Platform.OS === 'android') {
         ToastAndroid.show(t('common.saved'), ToastAndroid.SHORT);
       }
-      // Ak chceš aj na iOS krátke potvrdenie bez blokujúceho alertu,
-      // môžeš neskôr doplniť Snackbar na feede.
       navigation.goBack();
     } catch (e) {
       console.error(e);
-      // chybovú hlášku necháme, aby užívateľ vedel, že sa neuložilo
-      // (táto je OK aj na iOS, lebo ide o výnimku)
       alert(t('errors.readinessSaveFailed', { defaultValue: 'Failed to save readiness.' }));
     } finally {
       setSaving(false);
     }
   };
 
-
   const parsed = date ? new Date(date) : null;
-
- return (
+React.useEffect(() => {
+  if (skipAutoLoad) {
+    // práve sme si odpovede nastavili ručne (napr. copy-forward), neprebíjaj ich
+    setSkipAutoLoad(false);
+    return;
+  }
+  loadForDate(date);
+}, [date, loadForDate, skipAutoLoad]);
+  return (
     <ScrollView contentContainerStyle={styles.screen} scrollEnabled={scrollEnabled}>
       <Card style={styles.card}>
         <Card.Content>
@@ -188,18 +224,33 @@ export default function ReadinessScreen() {
             right={<TextInput.Icon icon="calendar" onPress={() => setDpOpen(true)} />}
             style={{ backgroundColor: '#fff', marginTop: 8 }}
           />
+<MaterialCalendarModal
+  visible={dpOpen}
+  date={toNoon(parsed ?? new Date())}
+  locale={i18n.language.startsWith('cs') ? 'cs' : i18n.language.startsWith('sk') ? 'sk' : 'en'}
+  onDismiss={() => setDpOpen(false)}
+  onConfirm={async (picked: Date) => {
+    const pickedLocal = toNoon(picked);
+    const dkey = toDateKey(pickedLocal);
 
-          <MaterialCalendarModal
-            visible={dpOpen}
-            date={toNoon(parsed ?? new Date())}
-            locale={i18n.language.startsWith('cs') ? 'cs' : i18n.language.startsWith('sk') ? 'sk' : 'en'}
-            onDismiss={() => setDpOpen(false)}
-            onConfirm={(picked: Date) => {
-              const pickedLocal = toNoon(picked);
-              setDate(toDateKey(pickedLocal));
-              setDpOpen(false);
-            }}
-          />
+    // zisti, či existujú odpovede pre nový dátum
+    const existing = await getByDate(dkey);
+
+    if (existing?.answers) {
+      // existuje záznam → načítaj ho
+      setAnswers(existing.answers);
+      // nič neskipujeme, lebo effect by aj tak načítal to isté
+      setSkipAutoLoad(true); // (voliteľné, ale nech nebliká)
+    } else {
+      // neexistuje záznam → ponechaj aktuálne odpovede (copy-forward)
+      setSkipAutoLoad(true); // povieme effectu, nech teraz nenačítava
+      // setAnswers(prev => prev); // no-op, necháme, čo je vyklikané
+    }
+
+    setDate(dkey);
+    setDpOpen(false);
+  }}
+/>
 
           <Paragraph style={{ marginTop: 12 }}>
             {t('recovery.score')}: <Text style={{ fontWeight: 'bold' }}>{score.toFixed(1)}</Text> / 10
